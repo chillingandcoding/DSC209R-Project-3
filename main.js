@@ -8,7 +8,7 @@ import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7/+esm';
 let xScale, yScale;
 
 async function loadData() {
-    const data = await d3.csv("../datasets/economy-and-growth.csv", d => ({
+    const data = await d3.csv("./datasets/economy-and-growth.csv", d => ({
         country: d["Country Name"],
         gdp: +d["average_value_GDP per capita (current US$)"],
         year: +d.Year
