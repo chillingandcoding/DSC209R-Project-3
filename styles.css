@@ -1,10 +1,10 @@
 body {
-  font: 100%/1.5 Roboto;
-  max-width: 100ch;
-  margin-inline: max(1em, (100% - 100ch) / 2);
+    font: 100%/1.5 Roboto;
+    max-width: 140ch;
+    margin-inline: max(1em, (100% - 140ch) / 2);
 }
 
-h1{
+h1 {
     font-size: 2.5em;
 }
 
@@ -12,6 +12,14 @@ h2 {
     font-size: 1.5em;
 }
 
-.team{
+.team {
     font-size: 1em;
+}
+
+#chart {
+  aspect-ratio: 3 / 2;
+}
+
+.gridlines line {
+    stroke-width: 0.2px;
 }
