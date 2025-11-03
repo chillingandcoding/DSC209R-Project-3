@@ -25,17 +25,13 @@ function renderGraph(data) {
         .select('#chart')
         .append('svg')
         .attr('viewBox', `0 0 ${width} ${height}`)
+        // Preserving aspect ratio here so that it scales to the top and not push everything down
+        // due to the viewbox having the same dimensions
         .attr('preserveAspectRatio', 'xMinYMin')
         .style('overflow', 'visible');
 
-    xScale = d3
-        .scaleLinear()
-        .domain(d3.extent(data, (d) => d.year))
-        .range([0, width])
-        .nice();
-
-    yScale = d3.scaleLinear()
-        .domain([0, d3.max(data, d => d.gdp)]);
+    xScale = d3.scaleLinear().domain(d3.extent(data, (d) => d.year)).range([0, width]).nice();
+    yScale = d3.scaleLinear().domain([0, d3.max(data, d => d.gdp)]);
 
     // Used a responsive height for bottom margin to have the heading under scale better
     const margin = { top: 10, right: 20, bottom: height * 0.1, left: 80 };  
@@ -51,6 +47,7 @@ function renderGraph(data) {
     xScale.range([usableArea.left, usableArea.right]);
     yScale.range([usableArea.bottom, usableArea.top]);
 
+    // Create gridlines
     const gridlines = svg
         .append('g')
         .attr('class', 'gridlines')
@@ -59,8 +56,7 @@ function renderGraph(data) {
     gridlines.call(d3.axisLeft(yScale).tickFormat('').tickSize(-usableArea.width));
 
     const xAxis = d3.axisBottom(xScale);
-    const yAxis = d3
-        .axisLeft(yScale);
+    const yAxis = d3.axisLeft(yScale);
 
     svg
         .append('g')
@@ -96,18 +92,20 @@ function renderGraph(data) {
 let data = await loadData();
 const svg = renderGraph(data);
 
-// Setting variables 
+// Sorted array of country names
 const dataCountry = d3.group(data, d => d.country);
 const selectedCountry = d3.map(dataCountry.keys(), d => d).sort();
 
-// TODO - Add legend and different colored lines for countries, also limit selection amount?
-function drawLine(selection) {
-    const newData = selection.map(country => ({
+// TODO - Add legend and different colored lines for countries, add
+// circle markers on years, and also limit selection amount?
+function drawLine(value) {
+    const newData = value.map(country => ({
         country: country,
         values: dataCountry.get(country).sort((a, b) => d3.ascending(a.year, b.year))
     }));
 
     svg.selectAll('graphline')
+        // The event listener calls this with new data based on the picker to create new lines
         .data(newData, d => d.country)
         .join('path')
         .attr('fill', 'none')
@@ -125,9 +123,10 @@ d3.select('#countryPicker')
     .attr('value', d => d)
     .text(d => d);
 
+// Listening for when country picker is interacted with
 d3.select('#countryPicker').on('change', (event) => {
-    const eventHolder = event.target; // Variable for holding the event
+    const eventHolder = event.target; // Holding the select variable
     const picked = eventHolder.selectedOptions; // Picking the countries selected
-    const display = Array.from(picked).map(d => d.value); // Applying the selection
+    const display = Array.from(picked).map(d => d.value); // Getting the countries
     drawLine(display);
 });
