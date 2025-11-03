@@ -17,6 +17,8 @@ async function loadData() {
 }
 
 function renderGraph(data) {
+
+    // Starter frame sampled from Lab 6
     const width = 1200;
     const height = 800;
     const svg = d3
@@ -35,7 +37,8 @@ function renderGraph(data) {
     yScale = d3.scaleLinear()
         .domain([0, d3.max(data, d => d.gdp)]);
 
-    const margin = { top: 10, right: 20, bottom: height * 0.1, left: 80 };
+    // Used a responsive height for bottom margin to have the heading under scale better
+    const margin = { top: 10, right: 20, bottom: height * 0.1, left: 80 };  
     const usableArea = {
         top: margin.top,
         right: width - margin.right,
@@ -69,9 +72,10 @@ function renderGraph(data) {
         .attr('transform', `translate(${usableArea.left}, 0)`)
         .call(yAxis);
 
+    // Appending Labels, using the same font as the Heading + Body
     svg.append('text')
         .attr('text-anchor', 'middle')
-        .attr('x', (usableArea.left + usableArea.right) / 2)
+        .attr('x', d3.mean([usableArea.left, usableArea.right]))
         .attr('y', height - 30)
         .style('font-family', 'Roboto')
         .style('font-size', '16px')
@@ -80,12 +84,50 @@ function renderGraph(data) {
     svg.append('text')
         .attr('text-anchor', 'middle')
         .attr('transform', 'rotate(-90)')
-        .attr('x', -(usableArea.top + usableArea.bottom) / 2)
-        .attr('y', usableArea.left - 60) 
+        .attr('x', -d3.mean([usableArea.top, usableArea.bottom]))
+        .attr('y', usableArea.left - 60)
         .style('font-family', 'Roboto')
         .style('font-size', '16px')
         .text('GDP Per Capita (Current USD$)');
+
+    return svg;
 }
 
 let data = await loadData();
-renderGraph(data)
+const svg = renderGraph(data);
+
+// Setting variables 
+const dataCountry = d3.group(data, d => d.country);
+const selectedCountry = d3.map(dataCountry.keys(), d => d).sort();
+
+// TODO - Add legend and different colored lines for countries, also limit selection amount?
+function drawLine(selection) {
+    const newData = selection.map(country => ({
+        country: country,
+        values: dataCountry.get(country).sort((a, b) => d3.ascending(a.year, b.year))
+    }));
+
+    svg.selectAll('graphline')
+        .data(newData, d => d.country)
+        .join('path')
+        .attr('fill', 'none')
+        .attr('stroke', 'blue')
+        .attr('stroke-width', 2)
+        .attr('d', d => d3.line().x(d => xScale(d.year)).y(d => yScale(d.gdp))(d.values));
+}
+
+// Targeting the country picker
+// TODO - Add checkboxes to countries for better UX, also need to add a way to *unselect* a country
+d3.select('#countryPicker')
+    .selectAll('option')
+    .data(selectedCountry) 
+    .join('option')
+    .attr('value', d => d)
+    .text(d => d);
+
+d3.select('#countryPicker').on('change', (event) => {
+    const eventHolder = event.target; // Variable for holding the event
+    const picked = eventHolder.selectedOptions; // Picking the countries selected
+    const display = Array.from(picked).map(d => d.value); // Applying the selection
+    drawLine(display);
+});
