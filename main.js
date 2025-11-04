@@ -24,7 +24,7 @@ function renderGraph(data) {
     const svg = d3
         .select('#chart')
         .append('svg')
-        .attr('viewBox', 0 0 ${width} ${height})
+        .attr('viewBox', `0 0 ${width} ${height}`)
         // Preserving aspect ratio here so that it scales to the top and not push everything down
         // due to the viewbox having the same dimensions
         .attr('preserveAspectRatio', 'xMinYMin')
@@ -51,7 +51,7 @@ function renderGraph(data) {
     const gridlines = svg
         .append('g')
         .attr('class', 'gridlines')
-        .attr('transform', translate(${usableArea.left}, 0));
+        .attr('transform', `translate(${usableArea.left}, 0)`);
 
     gridlines.call(d3.axisLeft(yScale).tickFormat('').tickSize(-usableArea.width));
 
@@ -61,13 +61,13 @@ function renderGraph(data) {
     const xAxisGroup = svg
         .append('g')
         .attr('class', 'x-axis')
-        .attr('transform', translate(0, ${usableArea.bottom}))
+        .attr('transform', `translate(0, ${usableArea.bottom})`)
         .call(xAxis);
 
     const yAxisGroup = svg
         .append('g')
         .attr('class', 'y-axis')
-        .attr('transform', translate(${usableArea.left}, 0))
+        .attr('transform', `translate(${usableArea.left}, 0)`)
         .call(yAxis);
 
     // Appending Labels, using the same font as the Heading + Body
@@ -99,6 +99,8 @@ const { svg, usableArea, yAxisGroup, yAxis } = renderGraph(data);
 const dataCountry = d3.group(data, d => d.country);
 const selectedCountry = d3.map(dataCountry.keys(), d => d).sort();
 
+// TODO - Add legend and different colored lines for countries, add
+// circle markers on years, and also limit selection amount?
 function drawLine(value) {
     const newData = value.map(country => ({
         country: country,
@@ -113,7 +115,7 @@ function drawLine(value) {
     }
 
     svg.selectAll('graphline')
-       
+        // The event listener calls this with new data based on the picker to create new lines
         .data(newData, d => d.country)
         .join('path')
         .attr('fill', 'none')
@@ -124,7 +126,8 @@ function drawLine(value) {
 }
 
 // Targeting the country picker
-
+// TODO - Add checkboxes to countries for better UX, also need to add a way to *unselect* a country
+d3.select('#countryPicker')
     .selectAll('option')
     .data(selectedCountry) 
     .join('option')
