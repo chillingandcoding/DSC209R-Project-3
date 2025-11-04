@@ -34,7 +34,8 @@ function renderGraph(data) {
     yScale = d3.scaleLinear().domain([0, d3.max(data, d => d.gdp)]);
 
     // Used a responsive height for bottom margin to have the heading under scale better
-    const margin = { top: 10, right: 120, bottom: height * 0.1, left: 80 };  
+    // Increased right margin for legend visibility
+    const margin = { top: 10, right: 200, bottom: height * 0.1, left: 80 };  
     const usableArea = {
         top: margin.top,
         right: width - margin.right,
@@ -112,16 +113,17 @@ function drawLine(value) {
         yAxisGroup.transition().duration(700).call(yAxis.scale(yScale));
     }
 
-    svg.selectAll('graphline')
-        .data(newData, d => d.country)
+    svg.selectAll('.graphline')
+    
         .join('path')
+        .attr('class', 'graphline') 
         .attr('fill', 'none')
         .attr('stroke', 'blue')
         .attr('stroke-width', 2)
         .transition().duration(700)
         .attr('d', d => d3.line().x(d => xScale(d.year)).y(d => yScale(d.gdp))(d.values));
 
-    //Add legend for selected countries
+    // Add legend for selected countries
     const legend = svg.selectAll(".legend")
         .data(value, d => d);
 
@@ -145,8 +147,6 @@ function drawLine(value) {
     legend.exit().remove();
 }
 
-// Targeting the country picker
-d3.select('#countryPicker')
     .selectAll('option')
     .data(selectedCountry) 
     .join('option')
@@ -154,8 +154,8 @@ d3.select('#countryPicker')
     .text(d => d);
 
 d3.select('#countryPicker').on('change', (event) => {
-    const eventHolder = event.target;
-    const picked = eventHolder.selectedOptions; 
-    const display = Array.from(picked).map(d => d.value); 
+    const eventHolder = event.target; // Holding the select variable
+    const picked = eventHolder.selectedOptions; //Picking the countries selected
+    const display = Array.from(picked).map(d => d.value); //Getting the countries
     drawLine(display);
 });
