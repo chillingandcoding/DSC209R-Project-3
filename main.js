@@ -5,7 +5,7 @@
 
 import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7/+esm';
 
-let xScale, yScale;
+let xScale, yScale, colorScale;
 
 async function loadData() {
     const data = await d3.csv("./datasets/economy-and-growth.csv", d => ({
@@ -34,7 +34,7 @@ function renderGraph(data) {
     yScale = d3.scaleLinear().domain([0, d3.max(data, d => d.gdp)]);
 
     // Used a responsive height for bottom margin to have the heading under scale better
-    const margin = { top: 10, right: 20, bottom: 80, left: 80 };  
+    const margin = { top: 10, right: 20, bottom: 80, left: 80 };
     const usableArea = {
         top: margin.top,
         right: width - margin.right,
@@ -99,6 +99,11 @@ const { svg, usableArea, yAxisGroup, yAxis } = renderGraph(data);
 const dataCountry = d3.group(data, d => d.country);
 const selectedCountry = d3.map(dataCountry.keys(), d => d).sort();
 
+// Create a color scale using D3 Category10
+colorScale = d3.scaleOrdinal()
+    .domain(selectedCountry)
+    .range(d3.schemeCategory10);
+
 function drawLine(value) {
     const newData = value.map(country => ({
         country: country,
@@ -117,7 +122,7 @@ function drawLine(value) {
         .data(newData, d => d.country)
         .join('path')
         .attr('fill', 'none')
-        .attr('stroke', 'blue')
+        .attr('stroke', d => colorScale(d.country))
         .attr('stroke-width', 2)
         .transition().duration(700)
         .attr('d', d => d3.line().x(d => xScale(d.year)).y(d => yScale(d.gdp))(d.values));
@@ -127,7 +132,7 @@ function drawLine(value) {
 
 d3.select('#countryPicker')
     .selectAll('option')
-    .data(selectedCountry) 
+    .data(selectedCountry)
     .join('option')
     .attr('value', d => d)
     .text(d => d);
