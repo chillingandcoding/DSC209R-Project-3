@@ -18,8 +18,8 @@ async function loadData() {
 
 function renderGraph(data) {
 
-    // Starter frame sampled from Lab 6
-    const width = 1200;
+    // Starter frame sampled from Lab , set up the main drawung area and svg size
+    const width = 1350;
     const height = 800;
     const svg = d3
         .select('#chart')
@@ -34,7 +34,7 @@ function renderGraph(data) {
     yScale = d3.scaleLinear().domain([0, d3.max(data, d => d.gdp)]);
 
     // Used a responsive height for bottom margin to have the heading under scale better
-    const margin = { top: 10, right: 20, bottom: 80, left: 80 };  
+    const margin = { top: 10, right: 200, bottom: 80, left: 80 };  
     const usableArea = {
         top: margin.top,
         right: width - margin.right,
@@ -89,52 +89,162 @@ function renderGraph(data) {
         .text('GDP Per Capita (Current USD$)');
 
     // Return both svg and axis groups so they can be updated later
-    return { svg, usableArea, yAxisGroup, xAxisGroup, yAxis };
+    const legendGroup = svg.append('g')
+        .attr('class', 'legend')
+        //Make a space for the legend, top right
+        .attr('transform', `translate(${usableArea.right + 10 }, ${usableArea.top + 10})`);
+    return { svg, usableArea, yAxisGroup, xAxisGroup, yAxis, legendGroup};
+}
+
+function syncPickerFromSet() {
+  const sel = document.getElementById('countryPicker');
+  for (const opt of sel.options) {
+    opt.selected = selected.has(opt.value);
+  }
 }
 
 let data = await loadData();
-const { svg, usableArea, yAxisGroup, yAxis } = renderGraph(data);
+const { svg, usableArea, yAxisGroup, yAxis, legendGroup } = renderGraph(data);
 
-// Sorted array of country names
-const dataCountry = d3.group(data, d => d.country);
-const selectedCountry = d3.map(dataCountry.keys(), d => d).sort();
+// Stores contries in alphabetical order
+const dataByCountry = d3.group(data, d => d.country);
+//keeps the list of countries for dropdown and colors
+const allCountries = Array.from(dataByCountry.keys()).sort();
 
-function drawLine(value) {
-    const newData = value.map(country => ({
-        country: country,
-        values: dataCountry.get(country).sort((a, b) => d3.ascending(a.year, b.year))
-    }));
+// keeps track of the countries being shown
+const selected = new Set();  // starts empty
 
-    // Auto-adjust Y axis based on selected countries 
-    const maxY = d3.max(newData, d => d3.max(d.values, v => v.gdp));
-    if (maxY) {
-        yScale.domain([0, maxY]).nice();
-        yAxisGroup.transition().duration(700).call(yAxis.scale(yScale));
-    }
+// Color palette (repeats if needed)
+const palette = [
+  '#1f77b4','#ff7f0e','#2ca02c','#d62728','#9467bd',
+  '#8c564b','#e377c2','#7f7f7f','#bcbd22','#17becf',
+  '#393b79','#637939','#8c6d31','#843c39','#7b4173',
+  '#3182bd','#31a354','#756bb1','#636363','#e6550d'
+];
+const color = d3.scaleOrdinal().domain(allCountries).range(palette);
 
-    svg.selectAll('graphline')
-        // The event listener calls this with new data based on the picker to create new lines
-        .data(newData, d => d.country)
-        .join('path')
-        .attr('fill', 'none')
-        .attr('stroke', 'blue')
-        .attr('stroke-width', 2)
-        .transition().duration(700)
-        .attr('d', d => d3.line().x(d => xScale(d.year)).y(d => yScale(d.gdp))(d.values));
+function render() {
+  // Creates list of countries currently selected
+  const series = Array.from(selected).map(ctry => ({
+    country: ctry,
+    values: dataByCountry.get(ctry).slice().sort((a,b) => d3.ascending(a.year, b.year))
+  }));
+
+  // auto fit Y axis so all lines nicely fit
+  const maxY = series.length
+    ? d3.max(series, s => d3.max(s.values, v => v.gdp))
+    : d3.max(data, d => d.gdp); // if no country is selected
+  yScale.domain([0, maxY]).nice();
+  yAxisGroup.transition().duration(400).call(yAxis.scale(yScale));
+
+  // Draws lines for each counrty selected
+  const lineGen = d3.line()
+    .x(d => xScale(d.year))
+    .y(d => yScale(d.gdp));
+
+  const lines = svg.selectAll('.graphLine')
+    //Sort alphabetically so legend looks organized
+    .data(series.sort((a, b) => d3.ascending(a.country, b.country)), d => d.country)
+
+  // Removes old lines that aren't selectec anymore
+  lines.exit()
+    .transition().duration(300)
+    .style('opacity', 0)
+    .remove();
+
+  // Adds new lines for countries selected
+  const linesEnter = lines.enter()
+    .append('path')
+    .attr('class', 'graphLine')
+    .attr('fill', 'none')
+    .attr('stroke-width', 2)
+    .style('cursor', 'pointer')
+    .attr('stroke', d => color(d.country))
+    .on('click', (event, d) => {
+      // when you click a line, turn it on/off
+      if (selected.has(d.country)) selected.delete(d.country);
+      else selected.add(d.country);
+      syncPickerFromSet();
+      render();
+    });
+
+  // updates line colors and shapes
+  linesEnter.merge(lines)
+    .transition().duration(500)
+    .attr('d', d => lineGen(d.values))
+    .attr('stroke', d => color(d.country));
+
+  // Created the legend for the countries picked
+  const rowH = 18;
+const legend = legendGroup.selectAll('.legend-item')
+  .data(series, d => d.country);  // KEY by country (selected only)
+
+legend.exit().remove();
+
+const legendEnter = legend.enter()
+  .append('g')
+  .attr('class', 'legend-item')
+  .style('cursor', 'pointer')
+  .on('click', (event, d) => {
+    // When you click a legend item, deselects the country
+    if (selected.has(d.country)) selected.delete(d.country);
+    else selected.add(d.country);
+    syncPickerFromSet();
+    render();
+  });
+
+legendEnter.append('rect')
+  .attr('x', 0)
+  .attr('y', (d, i) => i * rowH - 8)
+  .attr('width', 12)
+  .attr('height', 12)
+  .attr('fill', d => color(d.country));
+
+legendEnter.append('text')
+  .attr('x', 18)
+  .attr('y', (d, i) => i * rowH)
+  .attr('dominant-baseline', 'middle')
+  .style('font-size', '12px')
+  .text(d => d.country);
+
+// update legend color and position when countries change
+legend.merge(legendEnter).select('rect')
+  .attr('y', (d, i) => i * rowH - 8)
+  .attr('fill', d => color(d.country));
+
+legend.merge(legendEnter).select('text')
+  .attr('y', (d, i) => i * rowH)
+  .text(d => d.country);
 }
 
-// Targeting the country picker
+
+
+// Handles the country dropdown list
 
 d3.select('#countryPicker')
     .selectAll('option')
-    .data(selectedCountry) 
+    .data(allCountries) 
     .join('option')
     .attr('value', d => d)
     .text(d => d);
+    // picks st
+    if (allCountries.length) {
+        selected.add(allCountries[252]);   // Makes US the first you see by default
+        syncPickerFromSet();             // makes dropdown show it
+    }
+    render();
 
-d3.select('#countryPicker').on('change', (event) => {
-    const eventHolder = event.target; // Holding the select variable
-    const picked = eventHolder.selectedOptions; // Picking the countries selected
-    const display = Array.from(picked).map(d => d.value); // Getting the countries
-    drawLine(display);
+//Lets you click to select/unselect countries in the dropdown
+d3.select('#countryPicker').on('mousedown', (event) => {
+    event.preventDefault();
+    const option = event.target;
+    const country = option.value;
+
+    // add or remove the clicked country
+    if (selected.has(country)) selected.delete(country);
+    else selected.add(country);
+
+    // updates the dropdown and refreshes the chart
+    syncPickerFromSet();
+    render();
 });
