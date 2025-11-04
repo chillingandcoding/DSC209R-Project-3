@@ -35,7 +35,7 @@ function renderGraph(data) {
 
     // Used a responsive height for bottom margin to have the heading under scale better
     // Increased right margin for legend visibility
-    const margin = { top: 10, right: 200, bottom: height * 0.1, left: 80 };  
+    const margin = { top: 10, right: 250, bottom: height * 0.1, left: 80 };  
     const usableArea = {
         top: margin.top,
         right: width - margin.right,
@@ -113,8 +113,10 @@ function drawLine(value) {
         yAxisGroup.transition().duration(700).call(yAxis.scale(yScale));
     }
 
+    // --- Draw the lines ---
     svg.selectAll('.graphline')
-    
+       
+        .data(newData, d => d.country)
         .join('path')
         .attr('class', 'graphline') 
         .attr('fill', 'none')
@@ -123,30 +125,33 @@ function drawLine(value) {
         .transition().duration(700)
         .attr('d', d => d3.line().x(d => xScale(d.year)).y(d => yScale(d.gdp))(d.values));
 
-    // Add legend for selected countries
-    const legend = svg.selectAll(".legend")
-        .data(value, d => d);
+    // --- Add legend for selected countries ---
+    svg.selectAll(".legendGroup").remove();
 
-    const legendEnter = legend.enter()
-        .append("g")
+    const legendGroup = svg.append("g")
+        .attr("class", "legendGroup")
+        .attr("transform", `translate(${usableArea.right + 30}, ${usableArea.top + 30})`);
+
+    const legend = legendGroup.selectAll(".legend")
+        .data(value)
+        .join("g")
         .attr("class", "legend")
-        .attr("transform", (d, i) => `translate(${usableArea.right + 20}, ${30 + i * 20})`);
+        .attr("transform", (d, i) => `translate(0, ${i * 20})`);
 
-    legendEnter.append("rect")
+    legend.append("rect")
         .attr("width", 12)
         .attr("height", 12)
         .attr("fill", "blue");
 
-    legendEnter.append("text")
+    legend.append("text")
         .attr("x", 20)
         .attr("y", 10)
         .style("font-size", "12px")
         .style("font-family", "Roboto")
         .text(d => d);
-
-    legend.exit().remove();
 }
 
+// Targeting the country picker
     .selectAll('option')
     .data(selectedCountry) 
     .join('option')
@@ -155,7 +160,7 @@ function drawLine(value) {
 
 d3.select('#countryPicker').on('change', (event) => {
     const eventHolder = event.target; // Holding the select variable
-    const picked = eventHolder.selectedOptions; //Picking the countries selected
-    const display = Array.from(picked).map(d => d.value); //Getting the countries
+    const picked = eventHolder.selectedOptions; // Picking the countries selected
+    const display = Array.from(picked).map(d => d.value); // Getting the countries
     drawLine(display);
 });
