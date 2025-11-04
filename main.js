@@ -34,7 +34,7 @@ function renderGraph(data) {
     yScale = d3.scaleLinear().domain([0, d3.max(data, d => d.gdp)]);
 
     // Used a responsive height for bottom margin to have the heading under scale better
-    const margin = { top: 10, right: 20, bottom: height * 0.1, left: 80 };  
+    const margin = { top: 10, right: 120, bottom: height * 0.1, left: 80 };  
     const usableArea = {
         top: margin.top,
         right: width - margin.right,
@@ -99,8 +99,6 @@ const { svg, usableArea, yAxisGroup, yAxis } = renderGraph(data);
 const dataCountry = d3.group(data, d => d.country);
 const selectedCountry = d3.map(dataCountry.keys(), d => d).sort();
 
-// TODO - Add legend and different colored lines for countries, add
-// circle markers on years, and also limit selection amount?
 function drawLine(value) {
     const newData = value.map(country => ({
         country: country,
@@ -115,7 +113,6 @@ function drawLine(value) {
     }
 
     svg.selectAll('graphline')
-        // The event listener calls this with new data based on the picker to create new lines
         .data(newData, d => d.country)
         .join('path')
         .attr('fill', 'none')
@@ -123,10 +120,32 @@ function drawLine(value) {
         .attr('stroke-width', 2)
         .transition().duration(700)
         .attr('d', d => d3.line().x(d => xScale(d.year)).y(d => yScale(d.gdp))(d.values));
+
+    //Add legend for selected countries
+    const legend = svg.selectAll(".legend")
+        .data(value, d => d);
+
+    const legendEnter = legend.enter()
+        .append("g")
+        .attr("class", "legend")
+        .attr("transform", (d, i) => `translate(${usableArea.right + 20}, ${30 + i * 20})`);
+
+    legendEnter.append("rect")
+        .attr("width", 12)
+        .attr("height", 12)
+        .attr("fill", "blue");
+
+    legendEnter.append("text")
+        .attr("x", 20)
+        .attr("y", 10)
+        .style("font-size", "12px")
+        .style("font-family", "Roboto")
+        .text(d => d);
+
+    legend.exit().remove();
 }
 
 // Targeting the country picker
-// TODO - Add checkboxes to countries for better UX, also need to add a way to *unselect* a country
 d3.select('#countryPicker')
     .selectAll('option')
     .data(selectedCountry) 
@@ -134,10 +153,9 @@ d3.select('#countryPicker')
     .attr('value', d => d)
     .text(d => d);
 
-// Listening for when country picker is interacted with
 d3.select('#countryPicker').on('change', (event) => {
-    const eventHolder = event.target; // Holding the select variable
-    const picked = eventHolder.selectedOptions; // Picking the countries selected
-    const display = Array.from(picked).map(d => d.value); // Getting the countries
+    const eventHolder = event.target;
+    const picked = eventHolder.selectedOptions; 
+    const display = Array.from(picked).map(d => d.value); 
     drawLine(display);
 });
