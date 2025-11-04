@@ -113,9 +113,7 @@ function drawLine(value) {
         yAxisGroup.transition().duration(700).call(yAxis.scale(yScale));
     }
 
-    // --- Draw the lines ---
     svg.selectAll('.graphline')
-       
         .data(newData, d => d.country)
         .join('path')
         .attr('class', 'graphline') 
@@ -125,12 +123,12 @@ function drawLine(value) {
         .transition().duration(700)
         .attr('d', d => d3.line().x(d => xScale(d.year)).y(d => yScale(d.gdp))(d.values));
 
-    // --- Add legend for selected countries ---
+    // Add legend for selected countries
     svg.selectAll(".legendGroup").remove();
 
     const legendGroup = svg.append("g")
         .attr("class", "legendGroup")
-        .attr("transform", `translate(${usableArea.right + 30}, ${usableArea.top + 30})`);
+        .attr("transform", `translate(${usableArea.left + 20}, ${usableArea.top + 20})`);
 
     const legend = legendGroup.selectAll(".legend")
         .data(value)
@@ -152,6 +150,7 @@ function drawLine(value) {
 }
 
 // Targeting the country picker
+d3.select('#countryPicker')
     .selectAll('option')
     .data(selectedCountry) 
     .join('option')
