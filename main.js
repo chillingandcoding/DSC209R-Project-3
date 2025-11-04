@@ -5,7 +5,7 @@
 
 import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7/+esm';
 
-let xScale, yScale;
+let xScale, yScale, colorScale;
 
 async function loadData() {
     const data = await d3.csv("./datasets/economy-and-growth.csv", d => ({
