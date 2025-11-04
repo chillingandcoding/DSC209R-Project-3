@@ -1,4 +1,4 @@
-// d3.select();
+（Legend），// d3.select();
 // d3.selectAll();
 // d3.select(h1).style("color", "blue");
 // d3.selectAll("p").style("font-size", "18px");
@@ -113,7 +113,7 @@ function drawLine(value) {
     }
 
     svg.selectAll('graphline')
-        
+       
         .data(newData, d => d.country)
         .join('path')
         .attr('fill', 'none')
@@ -131,6 +131,7 @@ function drawLine(value) {
     .attr('value', d => d)
     .text(d => d);
 
+// Listening for when country picker is interacted with
 d3.select('#countryPicker').on('change', (event) => {
     const eventHolder = event.target; // Holding the select variable
     const picked = eventHolder.selectedOptions; // Picking the countries selected
