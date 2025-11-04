@@ -18,16 +18,23 @@ async function loadData() {
 
 function renderGraph(data) {
 
+    // Starter frame sampled from Lab 6
     const width = 1200;
     const height = 800;
     const svg = d3
         .select('#chart')
         .append('svg')
-        .attr('viewBox', `0 0 ${width} ${height}`)
+        .attr('viewBox', 0 0 ${width} ${height})
+        // Preserving aspect ratio here so that it scales to the top and not push everything down
+        // due to the viewbox having the same dimensions
         .attr('preserveAspectRatio', 'xMinYMin')
         .style('overflow', 'visible');
 
-    const margin = { top: 10, right: 200, bottom: 80, left: 80 };
+    xScale = d3.scaleLinear().domain(d3.extent(data, (d) => d.year)).range([0, width]).nice();
+    yScale = d3.scaleLinear().domain([0, d3.max(data, d => d.gdp)]);
+
+    // Used a responsive height for bottom margin to have the heading under scale better
+    const margin = { top: 10, right: 20, bottom: height * 0.1, left: 80 };  
     const usableArea = {
         top: margin.top,
         right: width - margin.right,
@@ -37,30 +44,36 @@ function renderGraph(data) {
         height: height - margin.top - margin.bottom,
     };
 
-    xScale = d3.scaleLinear()
-        .domain(d3.extent(data, d => d.year))
-        .range([usableArea.left, usableArea.right])
-        .nice();
+    xScale.range([usableArea.left, usableArea.right]);
+    yScale.range([usableArea.bottom, usableArea.top]);
 
-    yScale = d3.scaleLinear()
-        .domain([0, d3.max(data, d => d.gdp)])
-        .range([usableArea.bottom, usableArea.top])
-        .nice();
+    // Create gridlines
+    const gridlines = svg
+        .append('g')
+        .attr('class', 'gridlines')
+        .attr('transform', translate(${usableArea.left}, 0));
+
+    gridlines.call(d3.axisLeft(yScale).tickFormat('').tickSize(-usableArea.width));
 
     const xAxis = d3.axisBottom(xScale);
     const yAxis = d3.axisLeft(yScale);
 
-    svg.append('g')
-        .attr('transform', `translate(0, ${usableArea.bottom})`)
+    const xAxisGroup = svg
+        .append('g')
+        .attr('class', 'x-axis')
+        .attr('transform', translate(0, ${usableArea.bottom}))
         .call(xAxis);
 
-    svg.append('g')
-        .attr('transform', `translate(${usableArea.left}, 0)`)
+    const yAxisGroup = svg
+        .append('g')
+        .attr('class', 'y-axis')
+        .attr('transform', translate(${usableArea.left}, 0))
         .call(yAxis);
 
+    // Appending Labels, using the same font as the Heading + Body
     svg.append('text')
         .attr('text-anchor', 'middle')
-        .attr('x', (usableArea.left + usableArea.right) / 2)
+        .attr('x', d3.mean([usableArea.left, usableArea.right]))
         .attr('y', height - 30)
         .style('font-family', 'Roboto')
         .style('font-size', '16px')
@@ -69,75 +82,58 @@ function renderGraph(data) {
     svg.append('text')
         .attr('text-anchor', 'middle')
         .attr('transform', 'rotate(-90)')
-        .attr('x', -(usableArea.top + usableArea.bottom) / 2)
+        .attr('x', -d3.mean([usableArea.top, usableArea.bottom]))
         .attr('y', usableArea.left - 60)
         .style('font-family', 'Roboto')
         .style('font-size', '16px')
         .text('GDP Per Capita (Current USD$)');
 
-    return { svg, usableArea };
+    // Return both svg and axis groups so they can be updated later
+    return { svg, usableArea, yAxisGroup, xAxisGroup, yAxis };
 }
 
-const data = await loadData();
-const { svg, usableArea } = renderGraph(data);
+let data = await loadData();
+const { svg, usableArea, yAxisGroup, yAxis } = renderGraph(data);
 
+// Sorted array of country names
 const dataCountry = d3.group(data, d => d.country);
-const selectedCountry = Array.from(dataCountry.keys()).sort();
+const selectedCountry = d3.map(dataCountry.keys(), d => d).sort();
 
-function drawLine(selected) {
-    const newData = selected.map(c => ({
-        country: c,
-        values: dataCountry.get(c).sort((a, b) => d3.ascending(a.year, b.year))
+function drawLine(value) {
+    const newData = value.map(country => ({
+        country: country,
+        values: dataCountry.get(country).sort((a, b) => d3.ascending(a.year, b.year))
     }));
 
+    // Auto-adjust Y axis based on selected countries 
     const maxY = d3.max(newData, d => d3.max(d.values, v => v.gdp));
-    yScale.domain([0, maxY]).nice();
+    if (maxY) {
+        yScale.domain([0, maxY]).nice();
+        yAxisGroup.transition().duration(700).call(yAxis.scale(yScale));
+    }
 
-    svg.selectAll('.graphline')
+    svg.selectAll('graphline')
+        
         .data(newData, d => d.country)
         .join('path')
-        .attr('class', 'graphline')
         .attr('fill', 'none')
         .attr('stroke', 'blue')
         .attr('stroke-width', 2)
-        .attr('d', d => d3.line()
-            .x(v => xScale(v.year))
-            .y(v => yScale(v.gdp))(d.values));
-
-    // --- Legend ---
-    svg.selectAll('.legendGroup').remove();
-
-    const legendGroup = svg.append('g')
-        .attr('class', 'legendGroup')
-        .attr('transform', `translate(${usableArea.right + 20}, ${usableArea.top + 20})`);
-
-    const legend = legendGroup.selectAll('.legend')
-        .data(selected)
-        .join('g')
-        .attr('class', 'legend')
-        .attr('transform', (d, i) => `translate(0, ${i * 20})`);
-
-    legend.append('rect')
-        .attr('width', 12)
-        .attr('height', 12)
-        .attr('fill', 'blue');
-
-    legend.append('text')
-        .attr('x', 20)
-        .attr('y', 10)
-        .style('font-size', '12px')
-        .style('font-family', 'Roboto')
-        .text(d => d);
+        .transition().duration(700)
+        .attr('d', d => d3.line().x(d => xScale(d.year)).y(d => yScale(d.gdp))(d.values));
 }
 
-d3.select('#countryPicker')
+// Targeting the country picker
+
     .selectAll('option')
-    .data(selectedCountry)
+    .data(selectedCountry) 
     .join('option')
     .attr('value', d => d)
     .text(d => d);
 
 d3.select('#countryPicker').on('change', (event) => {
-    const selected = Array.from(event.target.selectedOptions).map(d => d.value);
-    drawLine(selected);
+    const eventHolder = event.target; // Holding the select variable
+    const picked = eventHolder.selectedOptions; // Picking the countries selected
+    const display = Array.from(picked).map(d => d.value); // Getting the countries
+    drawLine(display);
 });
