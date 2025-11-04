@@ -58,13 +58,15 @@ function renderGraph(data) {
     const xAxis = d3.axisBottom(xScale);
     const yAxis = d3.axisLeft(yScale);
 
-    svg
+    const xAxisGroup = svg
         .append('g')
+        .attr('class', 'x-axis')
         .attr('transform', `translate(0, ${usableArea.bottom})`)
         .call(xAxis);
 
-    svg
+    const yAxisGroup = svg
         .append('g')
+        .attr('class', 'y-axis')
         .attr('transform', `translate(${usableArea.left}, 0)`)
         .call(yAxis);
 
@@ -86,11 +88,12 @@ function renderGraph(data) {
         .style('font-size', '16px')
         .text('GDP Per Capita (Current USD$)');
 
-    return svg;
+    // Return both svg and axis groups so they can be updated later
+    return { svg, usableArea, yAxisGroup, xAxisGroup, yAxis };
 }
 
 let data = await loadData();
-const svg = renderGraph(data);
+const { svg, usableArea, yAxisGroup, yAxis } = renderGraph(data);
 
 // Sorted array of country names
 const dataCountry = d3.group(data, d => d.country);
@@ -104,6 +107,13 @@ function drawLine(value) {
         values: dataCountry.get(country).sort((a, b) => d3.ascending(a.year, b.year))
     }));
 
+    // Auto-adjust Y axis based on selected countries 
+    const maxY = d3.max(newData, d => d3.max(d.values, v => v.gdp));
+    if (maxY) {
+        yScale.domain([0, maxY]).nice();
+        yAxisGroup.transition().duration(700).call(yAxis.scale(yScale));
+    }
+
     svg.selectAll('graphline')
         // The event listener calls this with new data based on the picker to create new lines
         .data(newData, d => d.country)
@@ -111,6 +121,7 @@ function drawLine(value) {
         .attr('fill', 'none')
         .attr('stroke', 'blue')
         .attr('stroke-width', 2)
+        .transition().duration(700)
         .attr('d', d => d3.line().x(d => xScale(d.year)).y(d => yScale(d.gdp))(d.values));
 }
 
