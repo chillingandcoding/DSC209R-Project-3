@@ -24,7 +24,7 @@ function renderGraph(data) {
     const svg = d3
         .select('#chart')
         .append('svg')
-        .attr('viewBox', 0 0 ${width} ${height})
+        .attr('viewBox', `0 0 ${width}, ${height}`)
         // Preserving aspect ratio here so that it scales to the top and not push everything down
         // due to the viewbox having the same dimensions
         .attr('preserveAspectRatio', 'xMinYMin')
@@ -34,7 +34,7 @@ function renderGraph(data) {
     yScale = d3.scaleLinear().domain([0, d3.max(data, d => d.gdp)]);
 
     // Used a responsive height for bottom margin to have the heading under scale better
-    const margin = { top: 10, right: 20, bottom: height * 0.1, left: 80 };  
+    const margin = { top: 10, right: 20, bottom: 80, left: 80 };  
     const usableArea = {
         top: margin.top,
         right: width - margin.right,
@@ -51,23 +51,23 @@ function renderGraph(data) {
     const gridlines = svg
         .append('g')
         .attr('class', 'gridlines')
-        .attr('transform', translate(${usableArea.left}, 0));
+        .attr('transform', `translate(${usableArea.left}, 0)`);
 
     gridlines.call(d3.axisLeft(yScale).tickFormat('').tickSize(-usableArea.width));
 
-    const xAxis = d3.axisBottom(xScale);
+    const xAxis = d3.axisBottom(xScale).tickFormat(d3.format('d'));
     const yAxis = d3.axisLeft(yScale);
 
     const xAxisGroup = svg
         .append('g')
         .attr('class', 'x-axis')
-        .attr('transform', translate(0, ${usableArea.bottom}))
+        .attr('transform', `translate(0, ${usableArea.bottom})`)
         .call(xAxis);
 
     const yAxisGroup = svg
         .append('g')
         .attr('class', 'y-axis')
-        .attr('transform', translate(${usableArea.left}, 0))
+        .attr('transform', `translate(${usableArea.left}, 0)`)
         .call(yAxis);
 
     // Appending Labels, using the same font as the Heading + Body
