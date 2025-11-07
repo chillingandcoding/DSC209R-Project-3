@@ -1,6 +1,7 @@
 import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7/+esm';
 
 let xScale, yScale, colorScale;
+let yearRange = null;
 
 async function loadData() {
     const data = await d3.csv("./datasets/economy-and-growth.csv", d => ({
@@ -11,7 +12,57 @@ async function loadData() {
     return data;
 }
 
+// Figure full span and set initial state once the CSV is loaded
+function mountYearControls(data) {
+  const extent = d3.extent(data, d => d.year);
+  yearRange = yearRange ?? [extent[0], extent[1]];
+  
+
+  const wrap = d3.select('body')
+    .insert('div', '#chart')
+    .attr('id', 'year-controls')
+    .style('margin', '10px 0')
+    .style('display', 'flex')
+    .style('gap', '8px')
+    .style('align-items', 'center');
+
+  wrap.append('label').text('Years:');
+
+  wrap.append('input')
+    .attr('type', 'number')
+    .attr('id', 'yearMin')
+    .attr('min', extent[0])
+    .attr('max', extent[1])
+    .attr('value', yearRange[0])
+    .on('input', (e) => {
+      yearRange[0] = Math.min(+e.target.value || extent[0], yearRange[1]);
+      d3.select('#chart').selectAll('*').remove();
+      ({ svg, usableArea, yAxisGroup, yAxis, legendGroup } = renderGraph(window.__DATA__));
+        render();
+    });
+
+  wrap.append('span').text('–');
+
+  wrap.append('input')
+    .attr('type', 'number')
+    .attr('id', 'yearMax')
+    .attr('min', extent[0])
+    .attr('max', extent[1])
+    .attr('value', yearRange[1])
+    .on('input', (e) => {
+      yearRange[1] = Math.max(+e.target.value || extent[1], yearRange[0]);
+      d3.select('#chart').selectAll('*').remove();
+        ({ svg, usableArea, yAxisGroup, yAxis, legendGroup } = renderGraph(window.__DATA__));
+        render();
+    });
+}
+
+
 function renderGraph(data) {
+    // Clamp data to the selected year window
+    const filtered = (yearRange && Array.isArray(yearRange))
+        ? data.filter(d => d.year >= yearRange[0] && d.year <= yearRange[1])
+        : data;
 
     // Starter frame sampled from Lab , set up the main drawing area and svg size
     const width = 1350;
@@ -25,8 +76,12 @@ function renderGraph(data) {
         .attr('preserveAspectRatio', 'xMinYMin')
         .style('overflow', 'visible');
 
-    xScale = d3.scaleLinear().domain(d3.extent(data, (d) => d.year)).range([0, width]).nice();
-    yScale = d3.scaleLinear().domain([0, d3.max(data, d => d.gdp)]);
+    xScale = d3.scaleLinear().domain(d3.extent(filtered, d => d.year))  // <-- use filtered
+        .range([0, width])
+        .nice();
+
+    yScale = d3.scaleLinear()
+        .domain([0, d3.max(filtered, d => d.gdp)]) // <-- use filtered
 
     // Used a responsive height for bottom margin to have the heading under scale better
     const margin = { top: 10, right: 200, bottom: 80, left: 80 };
@@ -99,7 +154,12 @@ function syncPickerFromSet() {
 }
 
 let data = await loadData();
-const { svg, usableArea, yAxisGroup, yAxis, legendGroup } = renderGraph(data);
+window.__DATA__ = data;   // keep a reference for re-renders
+mountYearControls(data);  // mount the two inputs once
+
+let svg, usableArea, yAxisGroup, yAxis, legendGroup;
+({ svg, usableArea, yAxisGroup, yAxis, legendGroup } = renderGraph(data));
+
 
 // Stores contries in alphabetical order
 const dataByCountry = d3.group(data, d => d.country);
@@ -160,10 +220,16 @@ function render() {
         values: dataByCountry.get(ctry).slice().sort((a, b) => d3.ascending(a.year, b.year))
     }));
 
-    // auto fit Y axis so all lines nicely fit
+    // keep only points within the selected year window
+    const [yrMin, yrMax] = yearRange ?? d3.extent(window.__DATA__, d => d.year);
+    series.forEach(s => {
+        s.values = s.values.filter(v => v.year >= yrMin && v.year <= yrMax);
+    });
+
+    const base = window.__DATA__.filter(d => d.year >= yrMin && d.year <= yrMax);
     const maxY = series.length
         ? d3.max(series, s => d3.max(s.values, v => v.gdp))
-        : d3.max(data, d => d.gdp); // if no country is selected
+        : d3.max(base, d => d.gdp);  // use filtered base when nothing selected
     yScale.domain([0, maxY]).nice();
     yAxisGroup.transition().duration(400).call(yAxis.scale(yScale));
 
