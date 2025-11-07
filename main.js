@@ -193,8 +193,23 @@ const events = {
     2020: "2019-2020, COVID-19"
 };
 
-function renderTooltip(year) {
+// Country-specific events (only show for specific countries)
+const countrySpecificEvents = {
+    "Rwanda": {
+        1994: "1994, Rwandan Genocide"
+    }
+};
+
+function renderTooltip(year, country) {
     const tooltip = document.getElementById('tooltip');
+
+    // Check for country-specific event first
+    if (country && countrySpecificEvents[country] && countrySpecificEvents[country][year]) {
+        tooltip.textContent = countrySpecificEvents[country][year];
+        return;
+    }
+
+    // Otherwise check for global events
     if (!year || !events[year]) {
         tooltip.textContent = '';
         return;
@@ -274,10 +289,19 @@ function render() {
     // Draw markers
     const interestingYears = new Set([1981, 2009, 2020])
 
-    const points = series.flatMap(s =>
-        s.values.filter(v => interestingYears.has(v.year)).map(v =>
-            ({ country: s.country, year: v.year, gdp: v.gdp }))
-    );
+    const points = series.flatMap(s => {
+        // Filter for global events
+        const globalEvents = s.values.filter(v => interestingYears.has(v.year));
+
+        // Add country-specific events if they exist
+        const countryEvents = countrySpecificEvents[s.country]
+            ? s.values.filter(v => Object.keys(countrySpecificEvents[s.country]).map(Number).includes(v.year))
+            : [];
+
+        // Combine both types of events
+        return [...globalEvents, ...countryEvents].map(v =>
+            ({ country: s.country, year: v.year, gdp: v.gdp }));
+    });
 
     const selectedMarkers = svg.selectAll('.marker').data(points, d => `${d.country}-${d.year}`);
 
@@ -306,11 +330,11 @@ function render() {
         .attr('cx', d => xScale(d.year))
         .attr('cy', d => yScale(d.gdp));
 
-    // Tooltip 
+    // Tooltip
     markerBev.on('mouseenter', (event, d) => {
         d3.select(event.currentTarget).style('fill', color(d.country))
             .style('fill-opacity', 1);
-        renderTooltip(d.year);
+        renderTooltip(d.year, d.country);
         updateTooltipVisibility(true);
     })
         .on('mousemove', (event) => {
