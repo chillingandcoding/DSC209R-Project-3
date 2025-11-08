@@ -232,7 +232,9 @@ const countrySpecificEvents = {
         2009: "2009, China becomes world's 2nd largest economy"
     },
     "Korea, Rep.": {
-        1997: "1997, Asian Financial Crisis"
+        1997: "1997, Asian Financial Crisis",
+        2018: "2018, SK hosts Winter Olympics",
+        2012: "2012, Gangnam Style goes viral"
     },
     "Thailand": {
         1997: "1997, Asian Financial Crisis"
@@ -314,10 +316,14 @@ const countrySpecificEvents = {
         2001: "2001, US-Afghanistan War begins"
     },
     "Turkey": {
-        2001: "2001, Turkish economic crisis"
+        2001: "2001, Turkish economic crisis",
+        1980: "1980, Military coup d'état",
+        2011: "2011, Syrian Civil War begins"
     },
     "Iraq": {
-        2003: "2003, US-led invasion of Iraq"
+        2003: "2003, US-led invasion of Iraq",
+        1998: "1998, Iraq disarmament crisis",
+        1991: "1991, Gulf War"
     },
     "Spain": {
         1992: "1992, Barcelona hosts Summer Olympics",
@@ -328,8 +334,239 @@ const countrySpecificEvents = {
         2002: "2002, Euro currency introduced",
         1982: "1982, Civilian government restored after military rule",
         2010: "2010, European sovereign debt crisis"
+    },
+    "Netherlands": {
+        2002: "2002, Euro currency introduced",
+        2001: "2001, Assassination of Pim Fortuyn"
+    },
+    "Belgium": {
+        2002: "2002, Euro currency introduced",
+        1993: "1993, Belgium becomes a federal state"
+    },
+    "Austria": {
+        2002: "2002, Euro currency introduced"
+
+    },
+    "Finland": {
+        1995: "1995, Finland joins the EU",
+        2002: "2002, Euro currency introduced"
+    },
+    "Denmark": {
+        2002: "2002, Euro currency introduced",
+        2003: "2003, Denmark participates in Iraq War"
+    },
+    "Ireland": {
+        2002: "2002, Euro currency introduced",
+        1995: "1995, Ireland joins the EU",
+        1998: "1998, Good Friday Agreement"
+    },
+    "Czech Republic": {
+        2004: "2004, Czech Republic joins the EU"
+    },
+    "Slovak Republic": {
+        2004: "2004, Slovakia joins the EU"
+    },
+    "Hungary": {
+        2004: "2004, Hungary joins the EU",
+        1991: "1991, Independence from Soviet Union",
+    },
+    "Poland": {
+        1991: "1991, Independence from Soviet Union",
+        2004: "2004, Poland joins the EU"
+    },
+    "Slovenia": {
+        2004: "2004, Slovenia joins the EU"
+    },
+    "Croatia": {
+        2013: "2013, Croatia joins the EU"
+    },
+    "Bulgaria": {
+        2007: "2007, Bulgaria joins the EU"
+    },
+    "Romania": {
+        2007: "2007, Romania joins the EU",
+        1991: "1991, Independence from Soviet Union",
+    },
+    "Lithuania": {
+        2004: "2004, Lithuania joins the EU",
+        1991: "1991, Independence from Soviet Union",
+    },
+    "Latvia": {
+        2004: "2004, Latvia joins the EU"
+    },
+    "Estonia": {
+        2004: "2004, Estonia joins the EU"
+    },
+    "Iceland": {
+        2008: "2008, Icelandic financial crisis",
+        2005: "2005, Icelandic troops withdraw from Iraq"
+    },
+    "New Zealand": {
+        2006: "2006, New Zealand withdraws troops from Iraq",
+        1984: "1984, Economic reforms begin under Roger Douglas",
+        2010: "2010, Multiple earthquakes"
+    },
+    "Australia": {
+        2008: "2008, Global Financial Crisis impacts Australia",
+        2003: "2003, Australia participates in Iraq War"
+    },
+    "Egypt": {
+        2011: "2011, Egyptian Revolution"
+    },
+    "Libya": {
+        2011: "2011, Libyan Civil War begins"
+    },
+    "Syria": {
+        2011: "2011, Syrian Civil War begins"
+    },
+    "Lebanon": {
+        2005: "2005, Cedar Revolution"
+    },
+    "Jordan": {
+        2011: "2011, Arab Spring protests"
+    },
+    "Morocco": {
+        2011: "2011, Arab Spring protests"
+    },
+    "Algeria": {
+        2011: "2011, Arab Spring protests"
+    },
+    "Tunisia": {
+        2011: "2011, Arab Spring begins in Tunisia"
+    },
+    "Sudan": {
+        2019: "2019, Sudanese Revolution"
+    },
+    "Ethiopia": {
+        2018: "2018, Political reforms under Abiy Ahmed"
+    },
+    "Nigeria": {
+        2009: "2009, Boko Haram insurgency intensifies",
+    },
+    "Ghana": {
+        2007: "2007, Ghana becomes a oil-producing nation"
+    },
+    "Kenya": {
+        2007: "2007, Post-election violence"
+    },
+    "Tanzania": {
+        2015: "2015, John Magufuli elected president"
+    },
+    "Uganda": {
+        2006: "2006, Yoweri Museveni re-elected president",
+        1985: "1985, National Resistance Movement takes power"
+    },
+    "Zambia": {
+        1991: "1991, Multi-party democracy restored"
+    },
+    "Zimbabwe": {
+        2000: "2000, Land reform program begins",
+        2008: "2008, Hyperinflation crisis"
+    },
+    "Mozambique": {
+        1992: "1992, End of Mozambican Civil War"
+    },
+    "Cambodia": {
+        1993: "1993, UN-sponsored elections",
+        1997: "1997, Coup d'état",
+        1998: "1998, Khmer Rouge officially disbanded",
+        1989: "1989, Vietnamese withdrawal completed"
+    },
+    "Myanmar": {
+        2011: "2011, Start of political reforms"
+    },
+    "Nepal": {
+        2008: "2008, Abolition of monarchy"
+    },
+    "Sri Lanka": {
+        2009: "2009, End of Sri Lankan Civil War"
+    },
+    "Bangladesh": {
+        1996: "1996, Sheikh Hasina becomes Prime Minister"
+    },
+    "Bhutan": {
+        2008: "2008, First democratic elections held"
+    },
+    "Mongolia": {
+        1990: "1990, Democratic revolution"
+    },
+    "Turkmenistan": {
+        2006: "2006, Gurbanguly Berdimuhamedow becomes president",
+        1991: "1991, Independence from Soviet Union"
+    },
+    "Uzbekistan": {
+        1991: "1991, Independence from Soviet Union"
+    },
+    "Kazakhstan": {
+        1991: "1991, Independence from Soviet Union"
+    },
+    "Kyrgyz Republic": {
+        1991: "1991, Independence from Soviet Union"
+    },
+    "Tajikistan": {
+        1991: "1991, Independence from Soviet Union",
+        1992: "1992, Start of Tajik Civil War"
+    },
+    "Armenia": {
+        1991: "1991, Independence from Soviet Union"
+    },
+    "Azerbaijan": {
+        1991: "1991, Independence from Soviet Union"
+    },
+    "Belarus": {
+        1991: "1991, Independence from Soviet Union"
+    },
+    "Moldova": {
+        1991: "1991, Independence from Soviet Union"
+    },
+    "Georgia": {
+        1991: "1991, Independence from Soviet Union",
+        2008: "2008, Russo-Georgian War"
+    },
+    "Cyprus": {
+        2004: "2004, Cyprus joins the EU"
+    },
+    "Togo": {
+        2005: "2005, Faure Gnassingbé becomes president"
+    },
+    "Gabon": {
+        2009: "2009, Ali Bongo Ondimba becomes president"
+    },
+    "Senegal": {
+        2000: "2000, Abdoulaye Wade becomes president"
+    },
+    "Malawi": {
+        1994: "1994, Multi-party democracy restored"
+    },
+    "Botswana": {
+        1998: "1998, Festus Mogae becomes president"
+    },
+    "Namibia": {
+        1990: "1990, Independence from South Africa"
+    },
+    "Haiti": {
+        2004: "2004, Haitian coup d'état"
+    },
+    "Cuba": {
+        2008: "2008, Raúl Castro becomes president",
+        1991: "1991, Collapse of Soviet Union impacts economy",
+        2015: "2015, US-Cuba diplomatic relations restored",
+        2000: "2000, Ban on US food and medicine lifted"
+    },
+    "Dominican Republic": {
+        2004: "2004, Hipólito Mejía becomes president"
+    },
+    "Jamaica": {
+        2007: "2007, Port Royal earthquake",
+        2010: "2010, Jamaica debt restructuring",
+        1981: "Reggae artist Bob Marley dies"
+    },
+    "Trinidad and Tobago": {
+        2007: "2007, Kamla Persad-Bissessar becomes first female prime minister"
     }
 };
+
+
 
 function renderTooltip(year, country) {
     const tooltip = document.getElementById('tooltip');
