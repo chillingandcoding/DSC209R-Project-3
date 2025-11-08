@@ -162,7 +162,7 @@ let svg, usableArea, yAxisGroup, yAxis, legendGroup;
 ({ svg, usableArea, yAxisGroup, yAxis, legendGroup } = renderGraph(data));
 
 
-// Stores contries in alphabetical order
+// Stores countries in alphabetical order
 const dataByCountry = d3.group(data, d => d.country);
 //keeps the list of countries for dropdown and colors
 const exclusion = ['OECD members', 'Arab World', 'Least developed countries: UN classification'];
@@ -174,6 +174,70 @@ const allCountries = Array.from(dataByCountry.keys())
         && !country.toLowerCase().includes('fragile')
         && !country.toLowerCase().includes('hipc'))
     .sort()
+
+// Regional groupings
+const regionGroups = {
+    "Africa": [
+        "Algeria", "Angola", "Benin", "Botswana", "Burkina Faso", "Burundi", "Cabo Verde", "Cameroon",
+        "Central African Republic", "Chad", "Comoros", "Congo, Dem. Rep.", "Congo, Rep.", "Cote d'Ivoire",
+        "Djibouti", "Egypt, Arab Rep.", "Equatorial Guinea", "Eritrea", "Eswatini", "Ethiopia", "Gabon",
+        "Gambia, The", "Ghana", "Guinea", "Guinea-Bissau", "Kenya", "Lesotho", "Liberia", "Libya",
+        "Madagascar", "Malawi", "Mali", "Mauritania", "Mauritius", "Morocco", "Mozambique", "Namibia",
+        "Niger", "Nigeria", "Rwanda", "Sao Tome and Principe", "Senegal", "Seychelles", "Sierra Leone",
+        "Somalia", "South Africa", "South Sudan", "Sudan", "Tanzania", "Togo", "Tunisia", "Uganda",
+        "Zambia", "Zimbabwe"
+    ],
+    "North America": [
+        "Canada", "United States"
+    ],
+    "Central America": [
+        "Belize", "Costa Rica", "El Salvador", "Guatemala", "Honduras", "Mexico", "Nicaragua", "Panama"
+    ],
+    "South America": [
+        "Argentina", "Bolivia", "Brazil", "Chile", "Colombia", "Ecuador", "Guyana", "Paraguay", "Peru",
+        "Suriname", "Uruguay", "Venezuela"
+    ],
+    "East Asia": [
+        "China", "Hong Kong SAR, China", "Japan", "Korea, Dem. People's Rep.", "Korea, Rep.", "Macao SAR, China",
+        "Mongolia", "Taiwan, China"
+    ],
+    "South & Southeast Asia": [
+        "Afghanistan", "Bangladesh", "Bhutan", "Brunei Darussalam", "Cambodia", "India", "Indonesia",
+        "Lao PDR", "Malaysia", "Maldives", "Myanmar", "Nepal", "Pakistan", "Philippines", "Singapore",
+        "Sri Lanka", "Thailand", "Timor-Leste", "Vietnam"
+    ],
+    "West Europe": [
+        "Andorra", "Austria", "Belgium", "Denmark", "Finland", "France", "Germany", "Greece", "Iceland",
+        "Ireland", "Italy", "Liechtenstein", "Luxembourg", "Malta", "Monaco", "Netherlands", "Norway",
+        "Portugal", "San Marino", "Spain", "Sweden", "Switzerland", "United Kingdom"
+    ],
+    "East Europe": [
+        "Albania", "Armenia", "Azerbaijan", "Belarus", "Bosnia and Herzegovina", "Bulgaria", "Croatia",
+        "Cyprus", "Czech Republic", "Estonia", "Georgia", "Hungary", "Kazakhstan", "Kosovo",
+        "Kyrgyz Republic", "Latvia", "Lithuania", "Moldova", "Montenegro", "North Macedonia", "Poland",
+        "Romania", "Russian Federation", "Russia", "Serbia", "Slovak Republic", "Slovenia", "Tajikistan",
+        "Turkmenistan", "Ukraine", "Uzbekistan"
+    ],
+    "Australia": [
+        "Australia", "New Zealand"
+    ],
+    "Pacific Islands": [
+        "Fiji", "Kiribati", "Marshall Islands", "Micronesia, Fed. Sts.", "Nauru", "Palau",
+        "Papua New Guinea", "Samoa", "Solomon Islands", "Tonga", "Tuvalu", "Vanuatu"
+    ],
+    "Middle East": [
+        "Bahrain", "Iran, Islamic Rep.", "Iraq", "Israel", "Jordan", "Kuwait", "Lebanon", "Oman",
+        "Qatar", "Saudi Arabia", "Syrian Arab Republic", "Syria", "Turkey", "United Arab Emirates", "West Bank and Gaza", "Yemen, Rep."
+    ]
+};
+
+// Organize countries by region
+const countriesByRegion = {};
+Object.keys(regionGroups).forEach(region => {
+    countriesByRegion[region] = allCountries.filter(country =>
+        regionGroups[region].includes(country)
+    );
+});
 
 
 // keeps track of the countries being shown
@@ -759,14 +823,39 @@ function render() {
         .text(d => d.country);
 }
 
-// Handles the country dropdown list
+// Handles the country dropdown list - organized by regions
 
-d3.select('#countryPicker')
-    .selectAll('option')
-    .data(allCountries)
-    .join('option')
-    .attr('value', d => d)
-    .text(d => d);
+const countryPicker = d3.select('#countryPicker');
+
+// Define the order of regions
+const regionOrder = [
+    "North America",
+    "Central America",
+    "South America",
+    "West Europe",
+    "East Europe",
+    "East Asia",
+    "South & Southeast Asia",
+    "Middle East",
+    "Africa",
+    "Australia",
+    "Pacific Islands"
+];
+
+// Create optgroups for each region
+regionOrder.forEach(region => {
+    const countries = countriesByRegion[region];
+    if (countries && countries.length > 0) {
+        const optgroup = countryPicker.append('optgroup')
+            .attr('label', region);
+
+        optgroup.selectAll('option')
+            .data(countries)
+            .join('option')
+            .attr('value', d => d)
+            .text(d => d);
+    }
+});
 // picks st
 if (allCountries.length) {
     selected.add(allCountries[225]);   // Makes US the first you see by default
