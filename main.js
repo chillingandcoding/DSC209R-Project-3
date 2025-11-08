@@ -954,9 +954,8 @@ function render() {
         .style('cursor', 'pointer')
         .attr('stroke', d => color(d.country))
         .on('click', (event, d) => {
-            // when you click a line, turn it on/off
-            if (selected.has(d.country)) selected.delete(d.country);
-            else selected.add(d.country);
+            // when you click a line, deselect it
+            selected.delete(d.country);
             syncPickerFromSet();
             render();
         });
