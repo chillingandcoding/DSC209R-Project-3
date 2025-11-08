@@ -34,6 +34,7 @@ function mountYearControls(data) {
     .attr('min', extent[0])
     .attr('max', extent[1])
     .attr('value', yearRange[0])
+    .attr('step', 1)
     .on('input', (e) => {
       yearRange[0] = Math.min(+e.target.value || extent[0], yearRange[1]);
       d3.select('#chart').selectAll('*').remove();
@@ -49,6 +50,7 @@ function mountYearControls(data) {
     .attr('min', extent[0])
     .attr('max', extent[1])
     .attr('value', yearRange[1])
+    .attr('step', 1)
     .on('input', (e) => {
       yearRange[1] = Math.max(+e.target.value || extent[1], yearRange[0]);
       d3.select('#chart').selectAll('*').remove();
@@ -77,8 +79,7 @@ function renderGraph(data) {
         .style('overflow', 'visible');
 
     xScale = d3.scaleLinear().domain(d3.extent(filtered, d => d.year))  // <-- use filtered
-        .range([0, width])
-        .nice();
+        .range([0, width]);
 
     yScale = d3.scaleLinear()
         .domain([0, d3.max(filtered, d => d.gdp)]) // <-- use filtered
@@ -245,8 +246,10 @@ function render() {
     const maxY = series.length
         ? d3.max(series, s => d3.max(s.values, v => v.gdp))
         : d3.max(base, d => d.gdp);  // use filtered base when nothing selected
-    yScale.domain([0, maxY]).nice();
+    yScale.domain([0, maxY]);
     yAxisGroup.transition().duration(400).call(yAxis.scale(yScale));
+    svg.select('.gridlines')
+        .call(d3.axisLeft(yScale).tickFormat('').tickSize(-usableArea.width));
 
     // Draws lines for each counrty selected
     const lineGen = d3.line()
