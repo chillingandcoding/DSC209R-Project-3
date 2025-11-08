@@ -676,6 +676,195 @@ const countrySpecificEvents = {
     },
     "Trinidad and Tobago": {
         2007: "2007, Kamla Persad-Bissessar becomes first female prime minister"
+    },
+    "Chile": {
+        1988: "1988, End of Pinochet dictatorship",
+        2010: "2010, Major earthquake and tsunami"
+    },
+    "Colombia": {
+        2016: "2016, Peace agreement with FARC",
+        1993: "1993, Death of Pablo Escobar"
+    },
+    "Ecuador": {
+        2000: "2000, Dollarization of economy"
+    },
+    "Peru": {
+        1992: "1992, Capture of Shining Path leader",
+        2000: "2000, Fall of Fujimori regime"
+    },
+    "Venezuela": {
+        1999: "1999, Hugo Chávez becomes president",
+        2014: "2014, Start of economic crisis"
+    },
+    "Bolivia": {
+        2006: "2006, Evo Morales becomes president"
+    },
+    "Uruguay": {
+        2005: "2005, First left-wing government elected"
+    },
+    "Paraguay": {
+        1989: "1989, End of Stroessner dictatorship"
+    },
+    "Guyana": {
+        1992: "1992, First democratic elections"
+    },
+    "Suriname": {
+        1987: "1987, New constitution adopted"
+    },
+    "Costa Rica": {
+        1987: "1987, Óscar Arias wins Nobel Peace Prize"
+    },
+    "Panama": {
+        1989: "1989, US invasion of Panama",
+        1999: "1999, Panama Canal handover"
+    },
+    "Guatemala": {
+        1996: "1996, Peace accords end civil war"
+    },
+    "Honduras": {
+        2009: "2009, Constitutional crisis and coup"
+    },
+    "El Salvador": {
+        1992: "1992, Peace accords end civil war"
+    },
+    "Nicaragua": {
+        1990: "1990, End of Sandinista government"
+    },
+    "Belize": {
+        1981: "1981, Independence from United Kingdom"
+    },
+    "Israel": {
+        1993: "1993, Oslo Accords signed",
+        2006: "2006, Lebanon War"
+    },
+    "Iran, Islamic Rep.": {
+        1980: "1980, Iran-Iraq War begins",
+        2015: "2015, Nuclear deal signed"
+    },
+    "Saudi Arabia": {
+        1990: "1990, Gulf War",
+        2016: "2016, Vision 2030 economic reforms"
+    },
+    "United Arab Emirates": {
+        2020: "2020, Abraham Accords signed"
+    },
+    "Kuwait": {
+        1990: "1990, Iraqi invasion of Kuwait"
+    },
+    "Qatar": {
+        2017: "2017, Qatar diplomatic crisis"
+    },
+    "Bahrain": {
+        2011: "2011, Arab Spring protests"
+    },
+    "Oman": {
+        2020: "2020, Sultan Haitham bin Tariq takes power"
+    },
+    "Yemen, Rep.": {
+        2015: "2015, Civil war begins"
+    },
+    "South Africa": {
+        1994: "1994, End of Apartheid"
+    },
+    "Angola": {
+        2002: "2002, End of civil war"
+    },
+    "Cameroon": {
+        2016: "2016, Anglophone crisis begins"
+    },
+    "Congo, Dem. Rep.": {
+        1997: "1997, Fall of Mobutu regime"
+    },
+    "Cote d'Ivoire": {
+        2011: "2011, Post-election crisis"
+    },
+    "Somalia": {
+        1991: "1991, Collapse of central government"
+    },
+    "South Sudan": {
+        2011: "2011, Independence from Sudan"
+    },
+    "Eritrea": {
+        1993: "1993, Independence from Ethiopia"
+    },
+    "Equatorial Guinea": {
+        1996: "1996, Major oil discoveries"
+    },
+    "Brunei Darussalam": {
+        1984: "1984, Independence from United Kingdom"
+    },
+    "Maldives": {
+        2004: "2004, Indian Ocean tsunami"
+    },
+    "Timor-Leste": {
+        2002: "2002, Independence from Indonesia"
+    },
+    "Hong Kong SAR, China": {
+        1997: "1997, Handover to China",
+        2019: "2019, Pro-democracy protests"
+    },
+    "Macao SAR, China": {
+        1999: "1999, Handover to China"
+    },
+    "Korea, Dem. People's Rep.": {
+        1994: "1994, Death of Kim Il-sung",
+        2011: "2011, Death of Kim Jong-il"
+    },
+    "Andorra": {
+        1993: "1993, First constitution adopted"
+    },
+    "Liechtenstein": {
+        2003: "2003, Constitutional reforms"
+    },
+    "Luxembourg": {
+        2002: "2002, Euro currency introduced"
+    },
+    "Malta": {
+        2004: "2004, Malta joins the EU"
+    },
+    "Monaco": {
+        2005: "2005, Prince Albert II becomes ruler"
+    },
+    "San Marino": {
+        2008: "2008, Financial crisis impacts economy"
+    },
+    "Albania": {
+        1997: "1997, Pyramid scheme collapse",
+        1991: "1991, End of communist regime"
+    },
+    "Bosnia and Herzegovina": {
+        1995: "1995, Dayton Agreement ends war"
+    },
+    "Kosovo": {
+        2008: "2008, Declaration of independence"
+    },
+    "Montenegro": {
+        2006: "2006, Independence from Serbia"
+    },
+    "North Macedonia": {
+        2001: "2001, Ethnic Albanian insurgency"
+    },
+    "Serbia": {
+        2006: "2006, Independence of Montenegro",
+        2008: "2008, Kosovo declares independence"
+    },
+    "Fiji": {
+        2006: "2006, Military coup"
+    },
+    "Papua New Guinea": {
+        1998: "1998, Tsunami disaster"
+    },
+    "Solomon Islands": {
+        2003: "2003, Regional Assistance Mission begins"
+    },
+    "Vanuatu": {
+        2015: "2015, Cyclone Pam devastation"
+    },
+    "Samoa": {
+        2009: "2009, Change to driving on left side"
+    },
+    "Tonga": {
+        2006: "2006, Pro-democracy riots"
     }
 };
 
