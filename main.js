@@ -239,6 +239,53 @@ Object.keys(regionGroups).forEach(region => {
     );
 });
 
+// Define the order of regions
+const regionOrder = [
+    "North America",
+    "Central America",
+    "South America",
+    "West Europe",
+    "East Europe",
+    "East Asia",
+    "South & Southeast Asia",
+    "Middle East",
+    "Africa",
+    "Australia",
+    "Pacific Islands"
+];
+
+// Function to calculate regional averages
+function calculateRegionalAverage(region, yearValue) {
+    const regionCountries = countriesByRegion[region];
+    if (!regionCountries || regionCountries.length === 0) return null;
+
+    const values = regionCountries
+        .map(country => {
+            const countryData = dataByCountry.get(country);
+            if (!countryData) return null;
+            const yearData = countryData.find(d => d.year === yearValue);
+            return yearData ? yearData.gdp : null;
+        })
+        .filter(val => val !== null && !isNaN(val));
+
+    if (values.length === 0) return null;
+    return d3.mean(values);
+}
+
+// Pre-calculate regional average data
+const regionalAverages = {};
+regionOrder.forEach(region => {
+    const years = d3.extent(data, d => d.year);
+    const avgData = [];
+    for (let year = years[0]; year <= years[1]; year++) {
+        const avg = calculateRegionalAverage(region, year);
+        if (avg !== null) {
+            avgData.push({ country: `${region} Region Average`, year: year, gdp: avg });
+        }
+    }
+    regionalAverages[`${region} Region Average`] = avgData;
+});
+
 
 // keeps track of the countries being shown
 const selected = new Set();  // starts empty
@@ -250,7 +297,9 @@ const palette = [
     '#393b79', '#637939', '#8c6d31', '#843c39', '#7b4173',
     '#3182bd', '#31a354', '#756bb1', '#636363', '#e6550d'
 ];
-const color = d3.scaleOrdinal().domain(allCountries).range(palette);
+// Include regional averages in the color domain
+const allItems = [...allCountries, ...Object.keys(regionalAverages)];
+const color = d3.scaleOrdinal().domain(allItems).range(palette);
 
 const events = {
     1981: "1980-1982, Global Recession",
@@ -662,10 +711,20 @@ function updateTooltipVisibility(isVisible) {
 
 function render() {
     // Creates list of countries currently selected
-    const series = Array.from(selected).map(ctry => ({
-        country: ctry,
-        values: dataByCountry.get(ctry).slice().sort((a, b) => d3.ascending(a.year, b.year))
-    }));
+    const series = Array.from(selected).map(ctry => {
+        // Check if it's a regional average
+        if (regionalAverages[ctry]) {
+            return {
+                country: ctry,
+                values: regionalAverages[ctry].slice().sort((a, b) => d3.ascending(a.year, b.year))
+            };
+        }
+        // Otherwise it's a regular country
+        return {
+            country: ctry,
+            values: dataByCountry.get(ctry).slice().sort((a, b) => d3.ascending(a.year, b.year))
+        };
+    });
 
     // keep only points within the selected year window
     const [yrMin, yrMax] = yearRange ?? d3.extent(window.__DATA__, d => d.year);
@@ -827,21 +886,6 @@ function render() {
 
 const countryPicker = d3.select('#countryPicker');
 
-// Define the order of regions
-const regionOrder = [
-    "North America",
-    "Central America",
-    "South America",
-    "West Europe",
-    "East Europe",
-    "East Asia",
-    "South & Southeast Asia",
-    "Middle East",
-    "Africa",
-    "Australia",
-    "Pacific Islands"
-];
-
 // Create optgroups for each region
 regionOrder.forEach(region => {
     const countries = countriesByRegion[region];
@@ -849,9 +893,17 @@ regionOrder.forEach(region => {
         const optgroup = countryPicker.append('optgroup')
             .attr('label', region);
 
-        optgroup.selectAll('option')
+        // Add region average option at the top
+        optgroup.append('option')
+            .attr('value', `${region} Region Average`)
+            .text(`${region} Region Average`)
+            .style('font-weight', 'bold');
+
+        // Add individual countries
+        optgroup.selectAll('option.country-option')
             .data(countries)
             .join('option')
+            .attr('class', 'country-option')
             .attr('value', d => d)
             .text(d => d);
     }
