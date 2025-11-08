@@ -204,6 +204,13 @@ const countrySpecificEvents = {
     },
     "South Africa": {
         1994: "1994, End of Apartheid"
+    },
+    "Afghanistan": {
+        2001: "2001, US-Afghanistan War begins"
+    },
+    "United Kingdom": {
+        2020: "2020, Brexit",
+        2007: "Cyclone Tilo / North Sea flood"
     }
 };
 
