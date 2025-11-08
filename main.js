@@ -190,6 +190,7 @@ const color = d3.scaleOrdinal().domain(allCountries).range(palette);
 
 const events = {
     1981: "1980-1982, Global Recession",
+    2000: "2000, Dot-com Bubble Burst",
     2009: "2008-2009, Global Financial Crisis",
     2020: "2019-2020, COVID-19"
 };
@@ -200,7 +201,8 @@ const countrySpecificEvents = {
         1994: "1994, Rwandan Genocide"
     },
     "Germany": {
-        1990: "1990, German Reunification"
+        1990: "1990, German Reunification",
+        2010: "2010, Dot-com Bubble Burst"
     },
     "South Africa": {
         1994: "1994, End of Apartheid"
@@ -210,7 +212,91 @@ const countrySpecificEvents = {
     },
     "United Kingdom": {
         2020: "2020, Brexit",
-        2007: "Cyclone Tilo / North Sea flood"
+        2007: "Cyclone Tilo / North Sea flood",
+    },
+    "France": {
+        2005: "2005, European Heat Wave",
+        2002: "2002, Euro currency introduced"
+    },
+    "Japan": {
+        1997: "1997, Asian Financial Crisis",
+        2011: "2011, Tōhoku earthquake and tsunami"
+    },
+    "Vietnam": {
+        1986: "1986, Đổi Mới economic reforms begin",
+        1989: "1989, US lifts trade embargo"
+    },
+    "China": {
+        1978: "1978, Economic reforms begin under Deng Xiaoping",
+        1997: "1997, Asian Financial Crisis",
+        2009: "2009, China becomes world's 2nd largest economy"
+    },
+    "Korea, Rep.": {
+        1997: "1997, Asian Financial Crisis"
+    },
+    "Thailand": {
+        1997: "1997, Asian Financial Crisis"
+    },
+    "Indonesia": {
+        1997: "1997, Asian Financial Crisis"
+    },
+    "Malaysia": {
+        1997: "1997, Asian Financial Crisis"
+    },
+    "Philippines": {
+        1997: "1997, Asian Financial Crisis"
+    },
+    "Taiwan": {
+        1997: "1997, Asian Financial Crisis"
+    },
+    "Singapore": {
+        1997: "1997, Asian Financial Crisis"
+    },
+    "Lao PDR": {
+        1986: "1986, New Economic Mechanism reforms begin",
+        1997: "1997, Asian Financial Crisis"
+    },
+    "United States": {
+        1990: "1990, Gulf War",
+        2001: "2001, 9/11 Attacks",
+        2005: "2005, Hurricane Katrina",
+        2015: "2015, Same-sex Marriage Legalized Nationwide"
+
+    },
+    "Mexico": {
+        1994: "1994, NAFTA goes into effect"
+    },
+    "Sweden": {
+        1986: "Assassination of Prime Minister Olof Palme",
+        1991: "1991, Swedish banking crisis",
+        1995: "1995, Sweden joins the EU",
+        2018: "2018, Military Conscription Reactived  "
+    },
+    "Norway": {
+        1990: "1990, Petroleum Act passed"
+    },
+    "Italy": {
+        1992: "1992, Mani Pulite corruption investigations"
+    },
+    "Switzerland": {
+        2002: "2002, Switzerland joins the UN"
+    },
+    "Canada": {
+        1982: "1982, Canada Constitution Act enacted",
+        2018: "Canada legalizes cannabis"
+    },
+    "Greece": {
+        2009: "2009, Start of Greek government-debt crisis"
+    },
+    "Ukraine": {
+        2014: "2014, Annexation of Crimea by Russia",
+        2022: "2022, Russian invasion of Ukraine"
+    },
+    "Russia": {
+        1991: "1991, Dissolution of the Soviet Union",
+        1998: "1998, Russian financial crisis",
+        2014: "2014, Annexation of Crimea",
+        2022: "2022, Invasion of Ukraine"
     }
 };
 
@@ -303,7 +389,7 @@ function render() {
         .attr('stroke', d => color(d.country));
 
     // Draw markers
-    const interestingYears = new Set([1981, 2009, 2020])
+    const interestingYears = new Set([1981, 2000, 2009, 2020])
 
     const points = series.flatMap(s => {
         // Filter for global events
