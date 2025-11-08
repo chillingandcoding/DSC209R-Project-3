@@ -212,7 +212,7 @@ const countrySpecificEvents = {
     },
     "United Kingdom": {
         2020: "2020, Brexit",
-        2007: "Cyclone Tilo / North Sea flood",
+        2007: "Cyclone Tilo / North Sea flood"
     },
     "France": {
         2005: "2005, European Heat Wave",
@@ -261,7 +261,6 @@ const countrySpecificEvents = {
         2001: "2001, 9/11 Attacks",
         2005: "2005, Hurricane Katrina",
         2015: "2015, Same-sex Marriage Legalized Nationwide"
-
     },
     "Mexico": {
         1994: "1994, NAFTA goes into effect"
@@ -270,7 +269,7 @@ const countrySpecificEvents = {
         1986: "Assassination of Prime Minister Olof Palme",
         1991: "1991, Swedish banking crisis",
         1995: "1995, Sweden joins the EU",
-        2018: "2018, Military Conscription Reactived  "
+        2018: "2018, Military Conscription Reactivated"
     },
     "Norway": {
         1990: "1990, Petroleum Act passed"
@@ -283,7 +282,7 @@ const countrySpecificEvents = {
     },
     "Canada": {
         1982: "1982, Canada Constitution Act enacted",
-        2018: "Canada legalizes cannabis"
+        2018: "2018, Canada legalizes cannabis"
     },
     "Greece": {
         2009: "2009, Start of Greek government-debt crisis"
@@ -297,6 +296,38 @@ const countrySpecificEvents = {
         1998: "1998, Russian financial crisis",
         2014: "2014, Annexation of Crimea",
         2022: "2022, Invasion of Ukraine"
+    },
+    "Brazil": {
+        1994: "1994, Real Plan stabilizes economy",
+        2014: "2014, Start of Brazilian economic crisis"
+    },
+    "Argentina": {
+        2001: "2001, Argentine economic crisis"
+    },
+    "India": {
+        1984: "1984, Anti-Sikh Riots",
+        1991: "1991, Economic liberalization reforms begin",
+        2004: "2004, India applies for UN Security Council seat",
+        2013: "2013, Launch of Mars Orbiter Mission"
+    },
+    "Pakistan": {
+        2001: "2001, US-Afghanistan War begins"
+    },
+    "Turkey": {
+        2001: "2001, Turkish economic crisis"
+    },
+    "Iraq": {
+        2003: "2003, US-led invasion of Iraq"
+    },
+    "Spain": {
+        1992: "1992, Barcelona hosts Summer Olympics",
+        1986: "1986, Spain joins the European Community"
+    },
+    "Portugal": {
+        1986: "1986, Portugal joins the European Community",
+        2002: "2002, Euro currency introduced",
+        1982: "1982, Civilian government restored after military rule",
+        2010: "2010, European sovereign debt crisis"
     }
 };
 
