@@ -14,49 +14,49 @@ async function loadData() {
 
 // Figure full span and set initial state once the CSV is loaded
 function mountYearControls(data) {
-  const extent = d3.extent(data, d => d.year);
-  yearRange = yearRange ?? [extent[0], extent[1]];
-  
+    const extent = d3.extent(data, d => d.year);
+    yearRange = yearRange ?? [extent[0], extent[1]];
 
-  const wrap = d3.select('body')
-    .insert('div', '#chart')
-    .attr('id', 'year-controls')
-    .style('margin', '10px 0')
-    .style('display', 'flex')
-    .style('gap', '8px')
-    .style('align-items', 'center');
 
-  wrap.append('label').text('Years:');
+    const wrap = d3.select('body')
+        .insert('div', '#chart')
+        .attr('id', 'year-controls')
+        .style('margin', '10px 0')
+        .style('display', 'flex')
+        .style('gap', '8px')
+        .style('align-items', 'center');
 
-  wrap.append('input')
-    .attr('type', 'number')
-    .attr('id', 'yearMin')
-    .attr('min', extent[0])
-    .attr('max', extent[1])
-    .attr('value', yearRange[0])
-    .attr('step', 1)
-    .on('input', (e) => {
-      yearRange[0] = Math.min(+e.target.value || extent[0], yearRange[1]);
-      d3.select('#chart').selectAll('*').remove();
-      ({ svg, usableArea, yAxisGroup, yAxis, legendGroup } = renderGraph(window.__DATA__));
-        render();
-    });
+    wrap.append('label').text('Years:');
 
-  wrap.append('span').text('–');
+    wrap.append('input')
+        .attr('type', 'number')
+        .attr('id', 'yearMin')
+        .attr('min', extent[0])
+        .attr('max', extent[1])
+        .attr('value', yearRange[0])
+        .attr('step', 1)
+        .on('input', (e) => {
+            yearRange[0] = Math.min(+e.target.value || extent[0], yearRange[1]);
+            d3.select('#chart').selectAll('*').remove();
+            ({ svg, usableArea, yAxisGroup, yAxis, legendGroup } = renderGraph(window.__DATA__));
+            render();
+        });
 
-  wrap.append('input')
-    .attr('type', 'number')
-    .attr('id', 'yearMax')
-    .attr('min', extent[0])
-    .attr('max', extent[1])
-    .attr('value', yearRange[1])
-    .attr('step', 1)
-    .on('input', (e) => {
-      yearRange[1] = Math.max(+e.target.value || extent[1], yearRange[0]);
-      d3.select('#chart').selectAll('*').remove();
-        ({ svg, usableArea, yAxisGroup, yAxis, legendGroup } = renderGraph(window.__DATA__));
-        render();
-    });
+    wrap.append('span').text('–');
+
+    wrap.append('input')
+        .attr('type', 'number')
+        .attr('id', 'yearMax')
+        .attr('min', extent[0])
+        .attr('max', extent[1])
+        .attr('value', yearRange[1])
+        .attr('step', 1)
+        .on('input', (e) => {
+            yearRange[1] = Math.max(+e.target.value || extent[1], yearRange[0]);
+            d3.select('#chart').selectAll('*').remove();
+            ({ svg, usableArea, yAxisGroup, yAxis, legendGroup } = renderGraph(window.__DATA__));
+            render();
+        });
 }
 
 
@@ -198,6 +198,12 @@ const events = {
 const countrySpecificEvents = {
     "Rwanda": {
         1994: "1994, Rwandan Genocide"
+    },
+    "Germany": {
+        1990: "1990, German Reunification"
+    },
+    "South Africa": {
+        1994: "1994, End of Apartheid"
     }
 };
 
