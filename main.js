@@ -669,7 +669,9 @@ const countrySpecificEvents = {
         2009: "2009, Ali Bongo Ondimba becomes president"
     },
     "Senegal": {
-        2000: "2000, Abdoulaye Wade becomes president"
+        2000: "2000, Abdoulaye Wade becomes president",
+        1982: "1982, Confederation with Gambia formed",
+        1989: "1989, Confederation with Gambia dissolved"
     },
     "Malawi": {
         1994: "1994, Multi-party democracy restored"
@@ -814,6 +816,12 @@ const countrySpecificEvents = {
     "Somalia": {
         1991: "1991, Collapse of central government"
     },
+    "Seychelles": {
+        1981: "1981-1982, Multiple coup attempts",
+        1993: "1993, New constitution adopted",
+        2008: "2008, Major debt restructuring",
+        2004: "2004, Tsunami"
+    },
     "South Sudan": {
         2011: "2011, Independence from Sudan"
     },
@@ -893,6 +901,12 @@ const countrySpecificEvents = {
     "Vanuatu": {
         2015: "2015, Cyclone Pam devastation"
     },
+    "Madagascar": {
+        2009: "2009, Political crisis and coup",
+        2002: "2002-2005, Multiple cyclones hit the island",
+        1980: "1980, Economic reforms begin",
+        1986: "Declining export prices"
+    },
     "Samoa": {
         2009: "2009, Change to driving on left side"
     },
@@ -900,8 +914,10 @@ const countrySpecificEvents = {
         2006: "2006, Pro-democracy riots"
     },
     "Gambia": {
-        1994: "1994, Military coup"
-    }
+        1994: "1994, Military coup",
+        1982: "1982, Confederation with Senegal formed",
+        1989: "1989, Confederation with Senegal dissolved"
+    },
 };
 
 
