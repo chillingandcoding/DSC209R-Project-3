@@ -388,7 +388,7 @@ const countrySpecificEvents = {
         1990: "1990, Gulf War",
         2001: "2001, 9/11 Attacks",
         2005: "2005, Hurricane Katrina",
-        2015: "2015, Same-sex Marriage Legalized Nationwide"
+        2015: "2015, Same-sex marriage legalized N=nationwide"
     },
     "Mexico": {
         1994: "1994, NAFTA goes into effect"
@@ -410,7 +410,8 @@ const countrySpecificEvents = {
     },
     "Canada": {
         1982: "1982, Canada Constitution Act enacted",
-        2018: "2018, Canada legalizes cannabis"
+        2018: "2018, Canada legalizes cannabis",
+        2003: "2003, Rising exports demands"
     },
     "Greece": {
         2009: "2009, Start of Greek government-debt crisis"
@@ -756,8 +757,11 @@ const countrySpecificEvents = {
         1990: "1990, End of Sandinista government"
     },
     "Belize": {
-        1981: "1981, Independence from United Kingdom"
+        1981: "1981, Independence from United Kingdom",
+        1984: "1984, Belize joins the Organization of American States (OAS).",
+        1994: "1994, British troops withdraw from Belize."
     },
+
     "Israel": {
         1993: "1993, Oslo Accords signed",
         2006: "2006, Lebanon War"
