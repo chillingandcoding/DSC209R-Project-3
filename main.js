@@ -4,12 +4,18 @@ let xScale, yScale, colorScale;
 let yearRange = null;
 
 async function loadData() {
-    const data = await d3.csv("./datasets/economy-and-growth.csv", d => ({
-        country: d["Country Name"],
-        gdp: +d["average_value_GDP per capita (current US$)"],
-        year: +d.Year
-    }));
-    return data;
+    const data = await d3.csv("./datasets/economy-and-growth.csv", d => {
+        const gdp = +d["average_value_GDP per capita (current US$)"];
+        // Filter out missing or invalid GDP data
+        if (!gdp || isNaN(gdp)) return null;
+        return {
+            country: d["Country Name"],
+            gdp: gdp,
+            year: +d.Year
+        };
+    });
+    // Remove null entries from the data
+    return data.filter(d => d !== null);
 }
 
 // Figure full span and set initial state once the CSV is loaded
@@ -188,7 +194,7 @@ const regionGroups = {
         "Algeria", "Angola", "Benin", "Botswana", "Burkina Faso", "Burundi", "Cabo Verde", "Cameroon",
         "Central African Republic", "Chad", "Comoros", "Congo, Dem. Rep.", "Congo, Rep.", "Cote d'Ivoire",
         "Djibouti", "Egypt, Arab Rep.", "Equatorial Guinea", "Eritrea", "Eswatini", "Ethiopia", "Gabon",
-        "Gambia, The", "Ghana", "Guinea", "Guinea-Bissau", "Kenya", "Lesotho", "Liberia", "Libya",
+        "Gambia", "Ghana", "Guinea", "Guinea-Bissau", "Kenya", "Lesotho", "Liberia", "Libya",
         "Madagascar", "Malawi", "Mali", "Mauritania", "Mauritius", "Morocco", "Mozambique", "Namibia",
         "Niger", "Nigeria", "Rwanda", "Sao Tome and Principe", "Senegal", "Seychelles", "Sierra Leone",
         "Somalia", "South Africa", "South Sudan", "Sudan", "Tanzania", "Togo", "Tunisia", "Uganda",
@@ -205,7 +211,7 @@ const regionGroups = {
         "Suriname", "Uruguay", "Venezuela"
     ],
     "East Asia": [
-        "China", "Hong Kong SAR, China", "Japan", "North Korea", "South Korea", "Macao SAR, China",
+        "China", "Hong Kong", "Japan", "North Korea", "South Korea", "Macao",
         "Mongolia", "Taiwan, China"
     ],
     "South & Southeast Asia": [
@@ -229,12 +235,12 @@ const regionGroups = {
         "Australia", "New Zealand"
     ],
     "Pacific Islands": [
-        "Fiji", "Kiribati", "Marshall Islands", "Micronesia, Fed. Sts.", "Nauru", "Palau",
+        "Fiji", "Kiribati", "Marshall Islands", "Micronesia", "Nauru", "Palau",
         "Papua New Guinea", "Samoa", "Solomon Islands", "Tonga", "Tuvalu", "Vanuatu"
     ],
     "Middle East": [
-        "Bahrain", "Iran, Islamic Rep.", "Iraq", "Israel", "Jordan", "Kuwait", "Lebanon", "Oman",
-        "Qatar", "Saudi Arabia", "Syrian Arab Republic", "Syria", "Turkey", "United Arab Emirates", "West Bank and Gaza", "Yemen, Rep."
+        "Bahrain", "Iran", "Iraq", "Israel", "Jordan", "Kuwait", "Lebanon", "Oman",
+        "Qatar", "Saudi Arabia", "Syrian Arab Republic", "Syria", "Turkey", "United Arab Emirates", "West Bank and Gaza", "Yemen"
     ]
 };
 
@@ -444,6 +450,7 @@ const countrySpecificEvents = {
         2011: "2011, Syrian Civil War begins"
     },
     "Iraq": {
+        1980: "1980, Global oil glut drops oil prices",
         2003: "2003, US-led invasion of Iraq",
         1998: "1998, Iraq disarmament crisis",
         1991: "1991, Gulf War"
@@ -537,13 +544,15 @@ const countrySpecificEvents = {
         2011: "2011, Egyptian Revolution"
     },
     "Libya": {
+        1980: "1980, Global oil glut drops oil prices",
         2011: "2011, Libyan Civil War begins"
     },
     "Syria": {
         2011: "2011, Syrian Civil War begins"
     },
     "Lebanon": {
-        2005: "2005, Cedar Revolution"
+        2005: "2005, Cedar Revolution",
+        1990: "1990, End of Lebanese Civil War"
     },
     "Jordan": {
         2011: "2011, Arab Spring protests"
@@ -704,7 +713,8 @@ const countrySpecificEvents = {
     },
     "Venezuela": {
         1999: "1999, Hugo Chávez becomes president",
-        2014: "2014, Start of economic crisis"
+        2014: "2014, Start of economic crisis",
+        2003: "2003, Major oil strike"
     },
     "Bolivia": {
         2006: "2006, Evo Morales becomes president"
@@ -719,7 +729,8 @@ const countrySpecificEvents = {
         1992: "1992, First democratic elections"
     },
     "Suriname": {
-        1987: "1987, New constitution adopted"
+        1987: "1987, New constitution adopted",
+        2005: "2005, Gold prices boom"
     },
     "Costa Rica": {
         1987: "1987, Óscar Arias wins Nobel Peace Prize"
@@ -747,11 +758,13 @@ const countrySpecificEvents = {
         1993: "1993, Oslo Accords signed",
         2006: "2006, Lebanon War"
     },
-    "Iran, Islamic Rep.": {
+    "Iran": {
         1980: "1980, Iran-Iraq War begins",
+        1981: "1980, Global oil glut drops oil prices",
         2015: "2015, Nuclear deal signed"
     },
     "Saudi Arabia": {
+        1980: "Global oil glut drops oil prices",
         1990: "1990, Gulf War",
         2016: "2016, Vision 2030 economic reforms"
     },
@@ -759,10 +772,12 @@ const countrySpecificEvents = {
         2020: "2020, Abraham Accords signed"
     },
     "Kuwait": {
+        1980: "1980, Global oil glut drops oil prices",
         1990: "1990, Iraqi invasion of Kuwait"
     },
     "Qatar": {
-        2017: "2017, Qatar diplomatic crisis"
+        2017: "2017, Qatar diplomatic crisis",
+        1980: "Global oil glut drops oil prices"
     },
     "Bahrain": {
         2011: "2011, Arab Spring protests"
@@ -770,7 +785,7 @@ const countrySpecificEvents = {
     "Oman": {
         2020: "2020, Sultan Haitham bin Tariq takes power"
     },
-    "Yemen, Rep.": {
+    "Yemen": {
         2015: "2015, Civil war begins"
     },
     "South Africa": {
@@ -809,11 +824,11 @@ const countrySpecificEvents = {
     "Timor-Leste": {
         2002: "2002, Independence from Indonesia"
     },
-    "Hong Kong SAR, China": {
+    "Hong Kong": {
         1997: "1997, Handover to China",
         2019: "2019, Pro-democracy protests"
     },
-    "Macao SAR, China": {
+    "Macao": {
         1999: "1999, Handover to China"
     },
     "North Korea": {
@@ -875,6 +890,9 @@ const countrySpecificEvents = {
     },
     "Tonga": {
         2006: "2006, Pro-democracy riots"
+    },
+    "Gambia": {
+        1994: "1994, Military coup"
     }
 };
 
