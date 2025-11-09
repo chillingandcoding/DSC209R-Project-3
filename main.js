@@ -193,7 +193,7 @@ const regionGroups = {
     "Africa": [
         "Algeria", "Angola", "Benin", "Botswana", "Burkina Faso", "Burundi", "Cabo Verde", "Cameroon",
         "Central African Republic", "Chad", "Comoros", "Congo, Dem. Rep.", "Congo, Rep.", "Cote d'Ivoire",
-        "Djibouti", "Egypt, Arab Rep.", "Equatorial Guinea", "Eritrea", "Eswatini", "Ethiopia", "Gabon",
+        "Djibouti", "Egypt", "Equatorial Guinea", "Eritrea", "Eswatini", "Ethiopia", "Gabon",
         "Gambia", "Ghana", "Guinea", "Guinea-Bissau", "Kenya", "Lesotho", "Liberia", "Libya",
         "Madagascar", "Malawi", "Mali", "Mauritania", "Mauritius", "Morocco", "Mozambique", "Namibia",
         "Niger", "Nigeria", "Rwanda", "Sao Tome and Principe", "Senegal", "Seychelles", "Sierra Leone",
@@ -216,7 +216,7 @@ const regionGroups = {
     ],
     "South & Southeast Asia": [
         "Afghanistan", "Bangladesh", "Bhutan", "Brunei Darussalam", "Cambodia", "India", "Indonesia",
-        "Lao PDR", "Malaysia", "Maldives", "Myanmar", "Nepal", "Pakistan", "Philippines", "Singapore",
+        "Laos", "Malaysia", "Maldives", "Myanmar", "Nepal", "Pakistan", "Philippines", "Singapore",
         "Sri Lanka", "Thailand", "Timor-Leste", "Vietnam"
     ],
     "West Europe": [
@@ -380,7 +380,7 @@ const countrySpecificEvents = {
     "Singapore": {
         1997: "1997, Asian Financial Crisis"
     },
-    "Lao PDR": {
+    "Laos": {
         1986: "1986, New Economic Mechanism reforms begin",
         1997: "1997, Asian Financial Crisis"
     },
@@ -600,9 +600,12 @@ const countrySpecificEvents = {
     },
     "Cambodia": {
         1993: "1993, UN-sponsored elections",
-        1997: "1997, Coup d'état",
         1998: "1998, Khmer Rouge officially disbanded",
-        1989: "1989, Vietnamese withdrawal completed"
+        1989: "1989, Vietnamese withdrawal completed",
+        2006: "2006, Tourism increases significantly",
+        2000: "2000, Landmine clearance efforts intensify",
+        2005: "2005, Garment manufacturing boom",
+        2013: "2013, The Belt and Road Initiative begins"
     },
     "Myanmar": {
         2011: "2011, Start of political reforms"
@@ -726,7 +729,8 @@ const countrySpecificEvents = {
         1989: "1989, End of Stroessner dictatorship"
     },
     "Guyana": {
-        1992: "1992, First democratic elections"
+        1992: "1992, First democratic elections",
+        2015: "2015, Major oil discoveries"
     },
     "Suriname": {
         1987: "1987, New constitution adopted",
@@ -1126,7 +1130,7 @@ regionOrder.forEach(region => {
 });
 // picks st
 if (allCountries.length) {
-    selected.add(allCountries[225]);   // Makes US the first you see by default
+    selected.add("United States");   // Makes US the first you see by default
     syncPickerFromSet(false);             // makes dropdown show it
 }
 render();
