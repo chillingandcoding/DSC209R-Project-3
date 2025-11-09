@@ -147,10 +147,17 @@ function renderGraph(data) {
     return { svg, usableArea, yAxisGroup, xAxisGroup, yAxis, legendGroup };
 }
 
-function syncPickerFromSet() {
+function syncPickerFromSet(preserveScroll = true) {
     const sel = document.getElementById('countryPicker');
+    const scrollTop = preserveScroll ? sel.scrollTop : 0;
     for (const opt of sel.options) {
         opt.selected = selected.has(opt.value);
+    }
+    if (preserveScroll) {
+        // Use requestAnimationFrame to ensure scroll is set after browser's layout
+        requestAnimationFrame(() => {
+            sel.scrollTop = scrollTop;
+        });
     }
 }
 
@@ -198,7 +205,7 @@ const regionGroups = {
         "Suriname", "Uruguay", "Venezuela"
     ],
     "East Asia": [
-        "China", "Hong Kong SAR, China", "Japan", "Korea, Dem. People's Rep.", "Korea, Rep.", "Macao SAR, China",
+        "China", "Hong Kong SAR, China", "Japan", "North Korea", "South Korea", "Macao SAR, China",
         "Mongolia", "Taiwan, China"
     ],
     "South & Southeast Asia": [
@@ -344,7 +351,7 @@ const countrySpecificEvents = {
         1997: "1997, Asian Financial Crisis",
         2009: "2009, China becomes world's 2nd largest economy"
     },
-    "Korea, Rep.": {
+    "South Korea": {
         1997: "1997, Asian Financial Crisis",
         2018: "2018, SK hosts Winter Olympics",
         2012: "2012, Gangnam Style goes viral"
@@ -410,7 +417,10 @@ const countrySpecificEvents = {
         1991: "1991, Dissolution of the Soviet Union",
         1998: "1998, Russian financial crisis",
         2014: "2014, Annexation of Crimea",
-        2022: "2022, Invasion of Ukraine"
+        2022: "2022, Invasion of Ukraine",
+        2000: "2000, Vladimir Putin becomes president",
+        2011: "2011, Start of anti-corruption protests",
+        2009: "Second Chechen War ends"
     },
     "Brazil": {
         1994: "1994, Real Plan stabilizes economy",
@@ -806,7 +816,7 @@ const countrySpecificEvents = {
     "Macao SAR, China": {
         1999: "1999, Handover to China"
     },
-    "Korea, Dem. People's Rep.": {
+    "North Korea": {
         1994: "1994, Death of Kim Il-sung",
         2011: "2011, Death of Kim Jong-il"
     },
@@ -1099,21 +1109,34 @@ regionOrder.forEach(region => {
 // picks st
 if (allCountries.length) {
     selected.add(allCountries[225]);   // Makes US the first you see by default
-    syncPickerFromSet();             // makes dropdown show it
+    syncPickerFromSet(false);             // makes dropdown show it
 }
 render();
 
 //Lets you click to select/unselect countries in the dropdown
 d3.select('#countryPicker').on('mousedown', (event) => {
-    event.preventDefault();
     const option = event.target;
     const country = option.value;
+
+    if (!country) return; // Ignore clicks on optgroup headers
+
+    event.preventDefault();
+
+    const picker = event.currentTarget;
+    const scrollTop = picker.scrollTop;
 
     // add or remove the clicked country
     if (selected.has(country)) selected.delete(country);
     else selected.add(country);
 
     // updates the dropdown and refreshes the chart
-    syncPickerFromSet();
+    syncPickerFromSet(false); // Don't preserve scroll in syncPickerFromSet
     render();
+
+    // Restore the scroll position after everything else, using double RAF
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            picker.scrollTop = scrollTop;
+        });
+    });
 });
