@@ -913,6 +913,12 @@ const countrySpecificEvents = {
     "Tonga": {
         2006: "2006, Pro-democracy riots"
     },
+    "Micronesia": {
+        1993: "1993, Joins the International Monetary Fund",
+        1986: "1986, Signed Compact of Free Association with US",
+        1991: "1991, Joins UN",
+        2003: "2003, Compact of Free Association renewed"
+    },
     "Gambia": {
         1994: "1994, Military coup",
         1982: "1982, Confederation with Senegal formed",
